@@ -1,7 +1,9 @@
 # SIM-C: Circuit Simulation Software
 
-![SIM-C Logo](https://your-logo-url.com/logo.png)  
+![SIM-C Logo](https://aamitn.github.io/simc/SimC.jpg)  
 **Web-based Circuit Simulator | Powered by Java & GWT**
+
+### [Try Now](https://aamitn.github.io/simc/circuitjs.html)
 
 ## 🚀 About SIM-C
 SIM-C is an advanced circuit simulation software originally written in **Java** and later ported to run directly in a web browser using **Google Web Toolkit (GWT)**. It allows users to simulate electronic circuits without requiring any installation—just **click and run**!
