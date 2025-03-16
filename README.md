@@ -31,7 +31,7 @@ If you want to run SIM-C locally or contribute to development, follow these step
 
 ### Clone & Build
 ```sh
-git clone https://github.com/yourusername/simc.git
+git clone https://github.com/aamitn/simc.git
 cd simc
 mvn clean package
 ```
@@ -56,12 +56,12 @@ We welcome contributions! If you’d like to improve SIM-C, feel free to:
 5. Open a Pull Request
 
 ## 📜 License
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+This project is licensed under the **Apache 2.0**. See [LICENSE](LICENSE) for details.
 
 ## 📬 Contact
 For issues, suggestions, or contributions, reach out via:
-- **GitHub Issues**: [Report a Bug](https://github.com/yourusername/simc/issues)
-- **Email**: [your.email@example.com](mailto:your.email@example.com)
+- **GitHub Issues**: [Report a Bug](https://github.com/aamitn/simc/issues)
+- **Email**: [your.email@example.com](mailto:amitnandileo@gmail.com)
 
 ---
 🚀 **Enjoy seamless circuit simulation with SIM-C!** 🚀
