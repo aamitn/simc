@@ -14,39 +14,8 @@ For a hosted version of the application see:
 
 The web application can be compiled and run locally using Eclipse, or in a cloud development container like Github Codespaces or gitpod.io. Both of these services provide a number of free usage hours every month. You can also use the cloud tools from `./dev.sh` on your local Linux machine or in a local docker container.
 
-### Development using Eclipse
 
-The tools you will need to build the project are:
-
-* Eclipse, Oxygen version.
-* GWT plugin for Eclipse.
-
-Install "Eclipse for Java developers" from [here](https://www.eclipse.org/downloads/packages/). To add the GWT plugin for Eclipse follow the instructions [here](https://gwt-plugins.github.io/documentation/gwt-eclipse-plugin/Download.html).
-
-This repository is a project folder for your Eclipse project space. Once you have a local copy you can then build and run in development mode or build for deployment. Running in super development mode is done by clicking on the "run" icon on the toolbar and choosing http://127.0.0.1:8888/circuitjs.html from the "Development Mode" tab which appears. Building for deployment is done by selecting the project root node and using the GWT button on the Eclipse taskbar and choosing "GWT Compile Project...".
-
-GWT will build its output in to the "war" directory. In the "war" directory the file "iframe.html" is loaded as an iFrame in to the spare space at the bottom of the right hand pannel. It can be used for branding etc.
-
-### Development using cloud containers
-
-1. Install [Visual Studio Code](https://code.visualstudio.com/) and the appropriate remote extension: either [Gitpod Extension](https://marketplace.visualstudio.com/items?itemName=gitpod.gitpod-desktop) or [Codespaces Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces).
-2. Open your fork of the `circuitjs1` repository in your chosen provider's dev container.
-3. This should open a new tab in your browser showing VS Code. Click in the green button in the bottom left corner, then select "Open in VS Code Desktop" in the popup menu that opened. Click "Allow" in all URL popups and authenticate using github if asked.
-
-Once you have successfully connected your local VS Code to the remote workspace, you should be able to see the content of the remote container in your local VS Code. You can now continue with the setup:
-
-4. Open a shell inside the dev container by pressing `Ctrl+Backtick` or pressing `F1` and typing "Create new Terminal".
-5. Make sure you are in the folder `/workspaces/circuitjs1` inside the container (necessary only once per newly created container).
-6. Run `./dev.sh setup` to install all development dependencies, including GWT and Java.
-7. Run `./dev.sh start` to start the web server and the GWT code server. This will start two services: http://localhost:8000 and http://localhost:9876.
-8. Make sure both port and 8000 and 9876 are forwarded in the "Ports" tab (next to "Terminal").
-9. If you edit a Java file in VS Code and reload http://localhost:8000, it should recompile the file automatically. It will then load the compiled JavaScript and the corresponding source map from the code server running on http://localhost:9876. You should be able to see the your changes in the web application.
-
-> ***Note:*** When running the web application server inside a remote dev container, port forwarding is necessary in order to access the remote server from your own computer. This port forwarding is provided by Visual Studio Code running on your local computer.
->
-> Theoretically, it would be possible to use the browser-based VS Code interface. However, both Gitpod and Codespaces map forwarded ports to different domain names instead of different ports, which confuses the GWT code loader. It is possible to fix this by live-patching the `serverUrl` variable in `circuitjs1.nocache.js` using a custom HTTP server, but it also requires setting the port visibility to "Public" to avoid CORS errors due to redirects. Using a local installation of VS Code is much simpler.
-
-### Development using Gradle 
+### Local Development using Gradle 
 
 To build the application using gradle, do the following:
 
@@ -92,6 +61,40 @@ python3 -m http.server 8080
 ```
 
 Then go to the Ports tab, hover over the "Forwarded Address" and click "Follow Link".  Then click `circuitjs.html` to view the application. Or goto `http://localhost:8080/circuitjs.html` OR goto `http://localhost:8080`
+
+
+### Development using Eclipse
+
+The tools you will need to build the project are:
+
+* Eclipse, Oxygen version.
+* GWT plugin for Eclipse.
+
+Install "Eclipse for Java developers" from [here](https://www.eclipse.org/downloads/packages/). To add the GWT plugin for Eclipse follow the instructions [here](https://gwt-plugins.github.io/documentation/gwt-eclipse-plugin/Download.html).
+
+This repository is a project folder for your Eclipse project space. Once you have a local copy you can then build and run in development mode or build for deployment. Running in super development mode is done by clicking on the "run" icon on the toolbar and choosing http://127.0.0.1:8888/circuitjs.html from the "Development Mode" tab which appears. Building for deployment is done by selecting the project root node and using the GWT button on the Eclipse taskbar and choosing "GWT Compile Project...".
+
+GWT will build its output in to the "war" directory. In the "war" directory the file "iframe.html" is loaded as an iFrame in to the spare space at the bottom of the right hand pannel. It can be used for branding etc.
+
+### Development using cloud containers
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/) and the appropriate remote extension: either [Gitpod Extension](https://marketplace.visualstudio.com/items?itemName=gitpod.gitpod-desktop) or [Codespaces Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces).
+2. Open your fork of the `circuitjs1` repository in your chosen provider's dev container.
+3. This should open a new tab in your browser showing VS Code. Click in the green button in the bottom left corner, then select "Open in VS Code Desktop" in the popup menu that opened. Click "Allow" in all URL popups and authenticate using github if asked.
+
+Once you have successfully connected your local VS Code to the remote workspace, you should be able to see the content of the remote container in your local VS Code. You can now continue with the setup:
+
+4. Open a shell inside the dev container by pressing `Ctrl+Backtick` or pressing `F1` and typing "Create new Terminal".
+5. Make sure you are in the folder `/workspaces/circuitjs1` inside the container (necessary only once per newly created container).
+6. Run `./dev.sh setup` to install all development dependencies, including GWT and Java.
+7. Run `./dev.sh start` to start the web server and the GWT code server. This will start two services: http://localhost:8000 and http://localhost:9876.
+8. Make sure both port and 8000 and 9876 are forwarded in the "Ports" tab (next to "Terminal").
+9. If you edit a Java file in VS Code and reload http://localhost:8000, it should recompile the file automatically. It will then load the compiled JavaScript and the corresponding source map from the code server running on http://localhost:9876. You should be able to see the your changes in the web application.
+
+> ***Note:*** When running the web application server inside a remote dev container, port forwarding is necessary in order to access the remote server from your own computer. This port forwarding is provided by Visual Studio Code running on your local computer.
+>
+> Theoretically, it would be possible to use the browser-based VS Code interface. However, both Gitpod and Codespaces map forwarded ports to different domain names instead of different ports, which confuses the GWT code loader. It is possible to fix this by live-patching the `serverUrl` variable in `circuitjs1.nocache.js` using a custom HTTP server, but it also requires setting the port visibility to "Public" to avoid CORS errors due to redirects. Using a local installation of VS Code is much simpler.
+
 
 ## Deployment of the web application
 
