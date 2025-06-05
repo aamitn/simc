@@ -1,0 +1,230 @@
+---
+---
+
+<section id="pricing" class="py-20 bg-dark-secondary relative overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 bg-circuit-pattern opacity-5"></div>
+  
+  <div class="container mx-auto px-6 relative z-10">
+    <!-- Section Header -->
+    <div class="text-center mb-16" id="pricing-header">
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">
+        <span class="bg-gradient-to-r from-circuit-blue to-circuit-purple bg-clip-text text-transparent">
+          Simple, Transparent Pricing
+        </span>
+      </h2>
+      <p class="text-xl text-text-secondary max-w-2xl mx-auto">
+        Choose the plan that fits your needs. All plans include our core simulation engine and 24/7 support.
+      </p>
+    </div>
+    
+    <!-- Pricing Toggle -->
+    <div class="flex items-center justify-center mb-12" id="pricing-toggle">
+      <span class="text-text-secondary mr-4">Monthly</span>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" id="billing-toggle">
+        <div class="w-16 h-8 bg-dark-bg border border-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-8 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-circuit-blue after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-circuit-blue/20"></div>
+      </label>
+      <span class="text-text-secondary ml-4">Yearly <span class="text-circuit-green text-sm">(Save 20%)</span></span>
+    </div>
+    
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto" id="pricing-cards">
+      <!-- Starter Plan -->
+      <div class="pricing-card bg-dark-bg border border-white/10 rounded-2xl p-8 hover:border-circuit-blue/30 transition-all duration-300">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-white mb-2">Starter</h3>
+          <p class="text-text-secondary mb-6">Perfect for students and hobbyists</p>
+          <div class="mb-4">
+            <span class="text-4xl font-bold text-circuit-blue" data-monthly="0" data-yearly="0">$0</span>
+            <span class="text-text-secondary">/month</span>
+          </div>
+          <button class="w-full px-6 py-3 border-2 border-circuit-blue text-circuit-blue font-semibold rounded-lg hover:bg-circuit-blue hover:text-dark-bg transition-all duration-300">
+            Get Started Free
+          </button>
+        </div>
+        
+        <ul class="space-y-4">
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Up to 10 components per circuit</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Basic simulation engine</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Community support</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Export to PNG/PDF</span>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Professional Plan -->
+      <div class="pricing-card bg-gradient-to-br from-circuit-blue/10 to-circuit-purple/10 border-2 border-circuit-blue rounded-2xl p-8 relative transform hover:scale-105 transition-all duration-300">
+        <!-- Popular Badge -->
+        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+          <span class="bg-gradient-to-r from-circuit-blue to-circuit-purple px-4 py-2 text-white text-sm font-semibold rounded-full">
+            Most Popular
+          </span>
+        </div>
+        
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-white mb-2">Professional</h3>
+          <p class="text-text-secondary mb-6">Ideal for professional engineers</p>
+          <div class="mb-4">
+            <span class="text-4xl font-bold text-circuit-blue" data-monthly="49" data-yearly="39">$49</span>
+            <span class="text-text-secondary">/month</span>
+          </div>
+          <button class="w-full px-6 py-3 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-xl hover:shadow-circuit-blue/30 transition-all duration-300">
+            Start Free Trial
+          </button>
+        </div>
+        
+        <ul class="space-y-4">
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Unlimited components</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Advanced simulation engine</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Priority support</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">All export formats</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Collaboration tools</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">API access</span>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Enterprise Plan -->
+      <div class="pricing-card bg-dark-bg border border-white/10 rounded-2xl p-8 hover:border-circuit-purple/30 transition-all duration-300">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-white mb-2">Enterprise</h3>
+          <p class="text-text-secondary mb-6">For large teams and organizations</p>
+          <div class="mb-4">
+            <span class="text-4xl font-bold text-circuit-purple">Custom</span>
+          </div>
+          <button class="w-full px-6 py-3 border-2 border-circuit-purple text-circuit-purple font-semibold rounded-lg hover:bg-circuit-purple hover:text-dark-bg transition-all duration-300">
+            Contact Sales
+          </button>
+        </div>
+        
+        <ul class="space-y-4">
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Everything in Professional</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">On-premise deployment</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Custom integrations</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Dedicated support manager</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">SLA guarantees</span>
+          </li>
+          <li class="flex items-center">
+            <i data-feather="check" class="w-5 h-5 text-circuit-green mr-3"></i>
+            <span class="text-text-secondary">Training & onboarding</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="mt-20 max-w-4xl mx-auto" id="faq-section">
+      <h3 class="text-3xl font-bold text-center mb-12 text-white">Frequently Asked Questions</h3>
+      
+      <div class="space-y-6">
+        <div class="faq-item bg-dark-bg border border-white/10 rounded-xl p-6">
+          <button class="faq-question flex items-center justify-between w-full text-left">
+            <span class="text-lg font-semibold text-white">Is there a free trial available?</span>
+            <i data-feather="chevron-down" class="w-5 h-5 text-circuit-blue transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden mt-4 text-text-secondary">
+            Yes! We offer a 14-day free trial for our Professional plan with full access to all features. No credit card required.
+          </div>
+        </div>
+        
+        <div class="faq-item bg-dark-bg border border-white/10 rounded-xl p-6">
+          <button class="faq-question flex items-center justify-between w-full text-left">
+            <span class="text-lg font-semibold text-white">Can I upgrade or downgrade my plan anytime?</span>
+            <i data-feather="chevron-down" class="w-5 h-5 text-circuit-blue transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden mt-4 text-text-secondary">
+            Absolutely! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate the billing accordingly.
+          </div>
+        </div>
+        
+        <div class="faq-item bg-dark-bg border border-white/10 rounded-xl p-6">
+          <button class="faq-question flex items-center justify-between w-full text-left">
+            <span class="text-lg font-semibold text-white">What simulation engines do you support?</span>
+            <i data-feather="chevron-down" class="w-5 h-5 text-circuit-blue transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden mt-4 text-text-secondary">
+            We support SPICE-compatible simulation engines with GPU acceleration for faster processing. Our engine is compatible with most industry-standard models and components.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Pricing toggle functionality
+  const billingToggle = document.getElementById('billing-toggle') as HTMLInputElement;
+  const priceElements = document.querySelectorAll('[data-monthly]');
+  
+  billingToggle?.addEventListener('change', (e) => {
+    const isYearly = (e.target as HTMLInputElement).checked;
+    
+    priceElements.forEach(element => {
+      const monthlyPrice = element.getAttribute('data-monthly');
+      const yearlyPrice = element.getAttribute('data-yearly');
+      
+      if (monthlyPrice && yearlyPrice) {
+        element.textContent = isYearly ? `$${yearlyPrice}` : `$${monthlyPrice}`;
+      }
+    });
+  });
+  
+  // FAQ accordion functionality
+  document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+      const faqItem = question.closest('.faq-item');
+      const answer = faqItem?.querySelector('.faq-answer');
+      const icon = question.querySelector('i');
+      
+      if (answer && icon) {
+        answer.classList.toggle('hidden');
+        icon.style.transform = answer.classList.contains('hidden') 
+          ? 'rotate(0deg)' 
+          : 'rotate(180deg)';
+      }
+    });
+  });
+</script>
