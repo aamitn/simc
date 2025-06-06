@@ -71,10 +71,10 @@ jobs:
       - name: Install Node.js dependencies and build Astro site
         run: |
           echo "Installing npm dependencies in site-source/"
-          npm install
+          npm ci
           echo "Building site-source project with Astro"
           # Use npx to run astro command and pass GitHub Pages specific site and base paths
-          npx --no-install ci astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
+          npx --no-install astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
         working-directory: site-source # Sets the working directory for this step
 
       # Step 7: Run Gradle tasks
