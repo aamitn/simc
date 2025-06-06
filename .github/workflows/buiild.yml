@@ -6,7 +6,7 @@ on:
   # Trigger the workflow on pushes to the 'main' branch
   #push:
     #branches:
-      - main # Or your default branch, e.g., 'master'
+      #- main # Or your default branch, e.g., 'master'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
