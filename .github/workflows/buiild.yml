@@ -45,6 +45,7 @@ jobs:
         with:
           node-version: 'lts/*' # Installs the latest LTS Node.js version
           cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: 'site-source/package-lock.json'
 
       # Step 4: Install Node.js dependencies and build the site-source project
       # Assumes your Node.js project (with package.json) is in a directory named 'site-source'
