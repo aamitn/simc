@@ -1,5 +1,79 @@
 ---
 ---
+<style>
+  /* Custom Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease;
+  }
+
+  .modal-overlay.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .modal-content {
+    background-color: #1a202c; /* Tailwind's gray-900 / dark-bg equivalent */
+    color: #cbd5e0; /* Tailwind's slate-300 equivalent */
+    padding: 2rem;
+    border-radius: 0.75rem; /* rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* border-white/10 */
+  }
+
+  .modal-close-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: #cbd5e0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+  }
+
+  .modal-close-button:hover {
+    color: #e2e8f0;
+  }
+
+  .modal-message {
+    margin-bottom: 1rem;
+    font-size: 1.125rem; /* text-lg */
+  }
+
+  .modal-button {
+    background-image: linear-gradient(to right, #007bff, #8a2be2); /* circuit-blue to circuit-purple */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem; /* rounded-md */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .modal-button:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 123, 255, 0.1), 0 2px 4px -1px rgba(0, 123, 255, 0.06);
+  }
+</style>
 
 <footer id="contact" class="bg-dark-bg dark:bg-dark-bg bg-light-bg border-t border-white/10 dark:border-white/10 border-gray-200 py-20 transition-colors duration-300">
   <div class="container mx-auto px-6">
@@ -8,14 +82,17 @@
       <!-- Company Info -->
       <div id="footer-company">
         <div class="flex items-center space-x-2 mb-6">
-          <div class="w-8 h-8 bg-gradient-to-r from-circuit-blue to-circuit-purple rounded-lg flex items-center justify-center">
-            <i data-feather="zap" class="w-5 h-5 text-white"></i>
-          </div>
-          <span class="text-xl font-bold text-white">CircuitSim</span>
+            <div class="rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="./logosymbol.png" 
+                alt="SimC Logo" 
+                class="w-8 h-8 object-contain"
+              />
+            </div>
+          <span class="text-xl font-bold text-slate-800 dark:text-white">SimC</span>
         </div>
         <p class="text-text-secondary leading-relaxed mb-6">
-          Revolutionizing circuit simulation with cutting-edge technology and intuitive design. 
-          Empowering engineers to innovate faster and build the future.
+           Java Based Electronic Circuit Simulation Software ported to run on browser using GWT. 
         </p>
         <div class="flex space-x-4">
           <a href="#" class="w-10 h-10 bg-dark-secondary border border-white/10 rounded-lg flex items-center justify-center hover:border-circuit-blue/50 transition-colors">
@@ -35,7 +112,7 @@
       
       <!-- Site Navigation -->
       <div id="footer-navigation">
-        <h4 class="text-white font-semibold mb-6">Navigation</h4>
+        <h4 class="text-slate-700 dark:text-white text-text-primary-light font-semibold mb-6">Navigation</h4>
         <ul class="space-y-3">
           <li><a href="#home" class="text-text-secondary hover:text-circuit-blue transition-colors">Home</a></li>
           <li><a href="#features" class="text-text-secondary hover:text-circuit-blue transition-colors">Features</a></li>
@@ -46,40 +123,38 @@
       
       <!-- Support Links -->
       <div id="footer-support">
-        <h4 class="text-white font-semibold mb-6">Support</h4>
+        <h4 class="text-slate-700 dark:text-white text-text-primary-light font-semibold mb-6">Support</h4>
         <ul class="space-y-3">
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Help Center</a></li>
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Contact Support</a></li>
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Community Forum</a></li>
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Video Tutorials</a></li>
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Webinars</a></li>
-          <li><a href="#" class="text-text-secondary hover:text-circuit-purple transition-colors">Status Page</a></li>
+          <li><a href="https://github.com/aamitn/simc/wiki" class="text-text-secondary hover:text-circuit-purple transition-colors">Documentation</a></li>
+          <li><a href="https://github.com/aamitn/simc/issues/new?template=bug_report.md" class="text-text-secondary hover:text-circuit-purple transition-colors">Raise Issue</a></li>
+          <li><a href="https://github.com/aamitn/simc/discussions" class="text-text-secondary hover:text-circuit-purple transition-colors">Community Forum</a></li>
+          <li><a href="https://github.com/aamitn/simc" class="text-text-secondary hover:text-circuit-purple transition-colors">Repository</a></li>
         </ul>
       </div>
       
       <!-- Contact Info -->
       <div id="footer-contact">
-        <h4 class="text-white font-semibold mb-6">Get in Touch</h4>
+        <h4 class="text-slate-800 dark:text-white text-text-primary-light font-semibold mb-6">Get in Touch</h4>
         <div class="space-y-4">
           <div class="flex items-start">
             <i data-feather="mail" class="w-5 h-5 text-circuit-green mr-3 mt-1"></i>
             <div>
-              <p class="text-text-secondary">support@circuitsim.com</p>
+              <p><a href="mailto:support@bitmutex.com">support@bitmutex.com</a></p>
               <p class="text-text-secondary text-sm">General inquiries</p>
             </div>
           </div>
           <div class="flex items-start">
             <i data-feather="phone" class="w-5 h-5 text-circuit-green mr-3 mt-1"></i>
             <div>
-              <p class="text-text-secondary">+1 (555) 123-4567</p>
+              <p><a href="tel:+919038556097">+91 9038556097</a></p>
               <p class="text-text-secondary text-sm">Sales & Support</p>
             </div>
           </div>
           <div class="flex items-start">
             <i data-feather="map-pin" class="w-5 h-5 text-circuit-green mr-3 mt-1"></i>
             <div>
-              <p class="text-text-secondary">San Francisco, CA</p>
-              <p class="text-text-secondary text-sm">Headquarters</p>
+              <p><a href="https://maps.app.goo.gl/GN6bctujhQiAWMvG8" target="_blank" rel="noopener noreferrer">Kolkata, India</a></p>
+              <p class="text-text-secondary text-sm">Office Location</p>
             </div>
           </div>
         </div>
@@ -89,38 +164,47 @@
     <!-- Newsletter Signup -->
     <div class="bg-gradient-to-r from-circuit-blue/10 to-circuit-purple/10 rounded-2xl p-8 mb-12" id="newsletter">
       <div class="max-w-2xl mx-auto text-center">
-        <h3 class="text-2xl font-bold text-white mb-4">Stay Updated</h3>
+        <h3 class="text-2xl font-bold text-slate-800 dark:text-white text-text-primary-light mb-4">Stay Updated</h3>
         <p class="text-text-secondary mb-6">
           Get the latest updates on new features, tutorials, and industry insights delivered to your inbox.
         </p>
-        <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-          <input 
-            type="email" 
-            placeholder="Enter your email address"
-            class="flex-1 px-4 py-3 bg-dark-bg border border-white/20 rounded-lg text-white placeholder-text-secondary focus:outline-none focus:border-circuit-blue"
-            required
-          >
-          <button 
-            type="submit"
-            class="px-6 py-3 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-circuit-blue/25 transition-all duration-300"
-          >
+          <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" action="https://formspree.io/f/myzjkjea" method="POST">
+            <input
+              type="email"
+              name="email" placeholder="Enter your email address"
+              class="flex-1 px-4 py-3 bg-dark-bg border bg-slate-400 dark:bg-dark-bg dark:border-white/10 border border-white/10 rounded-lg text-slate-200 placeholder-text-secondary focus:outline-none focus:border-circuit-blue"
+              required
+            >
+            <button
+              type="submit"
+              class="px-6 py-3 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-circuit-blue/25 transition-all duration-300"
+            >
             Subscribe
           </button>
         </form>
       </div>
     </div>
-    
+
+    <!-- Custom Message Modal -->
+    <div id="message-modal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="modal-close-button" id="modal-close-button">&times;</button>
+        <p id="modal-message-text" class="modal-message"></p>
+        <button class="modal-button" id="modal-ok-button">OK</button>
+      </div>
+    </div>
+
     <!-- Bottom Footer -->
     <div class="border-t border-white/10 pt-8">
       <div class="flex flex-col md:flex-row items-center justify-between">
         <div class="flex items-center space-x-6 mb-4 md:mb-0">
           <p class="text-text-secondary text-sm">
-            © 2024 CircuitSim. All rights reserved.
+            &copy; <span id="footyear"></span> Bitmutex Technologies. All rights reserved. 
+            Open source under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" class="underline">GPL v3 License</a>.
           </p>
           <div class="flex items-center space-x-4 text-sm">
-            <a href="#" class="text-text-secondary hover:text-circuit-blue transition-colors">Privacy Policy</a>
-            <a href="#" class="text-text-secondary hover:text-circuit-blue transition-colors">Terms of Service</a>
-            <a href="#" class="text-text-secondary hover:text-circuit-blue transition-colors">Cookies</a>
+            <a href="https://bitmutex.com/privacy-policy" class="text-text-secondary hover:text-circuit-blue transition-colors">Privacy Policy</a>
+            <a href="https://bitmutex.com/terms-and-conditions" class="text-text-secondary hover:text-circuit-blue transition-colors">Terms of Service</a>
           </div>
         </div>
         
@@ -137,6 +221,97 @@
   </div>
 </footer>
 
+
+
+<script is:inline>
+  // Get references to the form and modal elements
+  const newsletterForm = document.getElementById("newsletter-form");
+  const messageModal = document.getElementById("message-modal");
+  const modalMessageText = document.getElementById("modal-message-text");
+  const modalCloseButton = document.getElementById("modal-close-button");
+  const modalOkButton = document.getElementById("modal-ok-button");
+
+  /**
+   * Displays a message in the custom modal.
+   * @param {string} message - The message to display.
+   */
+  function showMessageModal(message) {
+    modalMessageText.innerHTML = message;
+    messageModal.classList.add("show");
+  }
+
+  /**
+   * Hides the custom modal.
+   */
+  function hideMessageModal() {
+    messageModal.classList.remove("show");
+  }
+
+  // Add event listeners for closing the modal
+  // Ensure elements exist before adding listeners to avoid errors
+  if (modalCloseButton) {
+    modalCloseButton.addEventListener("click", hideMessageModal);
+  }
+  if (modalOkButton) {
+    modalOkButton.addEventListener("click", hideMessageModal);
+  }
+  // Close modal if overlay is clicked
+  if (messageModal) {
+    messageModal.addEventListener("click", (e) => {
+      if (e.target === messageModal) {
+        hideMessageModal();
+      }
+    });
+  }
+
+  /**
+   * Handles the form submission event.
+   * @param {Event} event - The submit event object.
+   */
+  async function handleSubmit(event) {
+    // Prevent default form submission to stop the browser from navigating away
+    event.preventDefault();
+    const data = new FormData(event.target); // Create FormData object from the form
+
+    try {
+      // Send the form data to Formspree
+      const response = await fetch(event.target.action, {
+        method: newsletterForm.method, // Use the form's defined method (POST)
+        body: data, // The collected form data
+        headers: {
+          'Accept': 'application/json' // Request JSON response from Formspree
+        }
+      });
+
+      // Check if the response was successful
+      if (response.ok) {
+        showMessageModal("Thanks for subscribing!"); // Show success message in modal
+        newsletterForm.reset(); // Clear the form fields
+      } else {
+        // If response is not OK, parse the error details
+        const responseData = await response.json();
+        if (Object.hasOwn(responseData, 'errors')) {
+          // Display specific error messages from Formspree
+          showMessageModal(responseData["errors"].map(error => error["message"]).join(", "));
+        } else {
+          // Display a generic error message
+          showMessageModal("Oops! There was a problem submitting your form.");
+        }
+      }
+    } catch (error) {
+      // Catch any network or fetch-related errors
+      showMessageModal("Oops! There was a problem submitting your form.");
+      console.error("Form submission error:", error); // Log error for debugging
+    }
+  }
+
+  // Attach the submit event listener to the form
+  // Ensure the form element exists before attaching the listener
+  if (newsletterForm) {
+    newsletterForm.addEventListener("submit", handleSubmit);
+  }
+</script>
+
 <script>
   // Back to top functionality
   const backToTopBtn = document.getElementById('back-to-top');
@@ -148,15 +323,7 @@
     });
   });
   
-  // Newsletter form submission
-  const newsletterForm = document.querySelector('#newsletter form');
-  
-  newsletterForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = (e.target as HTMLFormElement).querySelector('input[type="email"]') as HTMLInputElement;
-    
-    // Here you would typically send the email to your backend
-    alert(`Thank you for subscribing with email: ${email.value}`);
-    email.value = '';
-  });
+  //Footer year update
+  document.getElementById('footyear').textContent = new Date().getFullYear();
 </script>
+

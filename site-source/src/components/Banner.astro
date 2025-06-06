@@ -1,14 +1,14 @@
 ---
 ---
 
-<section class="py-16 bg-gradient-to-r from-circuit-blue/10 via-circuit-purple/10 to-circuit-green/10 relative overflow-hidden" id="banner-section">
+<section class="py-16 bg-gradient-to-r from-circuit-blue/10 via-circuit-purple/10 to-circuit-green/10 relative overflow-hidden" id="banner">
   <!-- Background Pattern -->
   <div class="absolute inset-0 bg-circuit-pattern opacity-5"></div>
   
   <div class="container mx-auto px-6 relative z-10">
     <!-- Trusted By Section -->
     <div class="text-center mb-12" id="banner-header">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4 text-white dark:text-white text-text-primary-light">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-circuit-blue to-circuit-purple bg-clip-text text-transparent">
         Trusted by Industry Leaders
       </h2>
       <p class="text-xl text-text-secondary dark:text-text-secondary text-text-secondary-light max-w-2xl mx-auto">
@@ -23,42 +23,42 @@
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-blue to-circuit-purple rounded-lg flex items-center justify-center mb-3">
           <i data-feather="cpu" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">TechCorp</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">TechCorp</span>
       </div>
       
       <div class="company-logo flex flex-col items-center p-6 bg-dark-bg/50 rounded-lg border border-white/10 hover:border-circuit-purple/30 transition-all duration-300">
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-purple to-circuit-green rounded-lg flex items-center justify-center mb-3">
           <i data-feather="zap" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">ElectroLab</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">ElectroLab</span>
       </div>
       
       <div class="company-logo flex flex-col items-center p-6 bg-dark-bg/50 rounded-lg border border-white/10 hover:border-circuit-green/30 transition-all duration-300">
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-green to-circuit-blue rounded-lg flex items-center justify-center mb-3">
           <i data-feather="activity" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">CircuitPro</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">CircuitPro</span>
       </div>
       
       <div class="company-logo flex flex-col items-center p-6 bg-dark-bg/50 rounded-lg border border-white/10 hover:border-circuit-blue/30 transition-all duration-300">
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-blue to-circuit-purple rounded-lg flex items-center justify-center mb-3">
           <i data-feather="layers" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">NanoTech</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">NanoTech</span>
       </div>
       
       <div class="company-logo flex flex-col items-center p-6 bg-dark-bg/50 rounded-lg border border-white/10 hover:border-circuit-purple/30 transition-all duration-300">
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-purple to-circuit-green rounded-lg flex items-center justify-center mb-3">
           <i data-feather="settings" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">AutoDesign</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">AutoDesign</span>
       </div>
       
       <div class="company-logo flex flex-col items-center p-6 bg-dark-bg/50 rounded-lg border border-white/10 hover:border-circuit-green/30 transition-all duration-300">
         <div class="w-12 h-12 bg-gradient-to-br from-circuit-green to-circuit-blue rounded-lg flex items-center justify-center mb-3">
           <i data-feather="monitor" class="w-6 h-6 text-white"></i>
         </div>
-        <span class="text-sm text-text-secondary font-medium">SimuLabs</span>
+        <span class="text-sm text-slate-100 dark:text-white text-text-primary-light  font-medium">SimuLabs</span>
       </div>
     </div>
     
@@ -142,16 +142,21 @@
     
     <!-- CTA Banner -->
     <div class="mt-16 text-center bg-gradient-to-r from-circuit-blue/20 to-circuit-purple/20 rounded-2xl p-12 border border-white/10" id="cta-banner">
-      <h3 class="text-3xl font-bold mb-4 text-white">Ready to Transform Your Circuit Design?</h3>
+      <h3 class="text-3xl font-bold mb-4 text-slate-600 dark:text-white text-text-primary-light">Ready to Transform Your Circuit Design?</h3>
       <p class="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
         Join the thousands of engineers who have already made the switch to our revolutionary platform.
       </p>
-      <button class="px-8 py-4 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg text-lg hover:shadow-xl hover:shadow-circuit-blue/30 transition-all duration-300 transform hover:scale-105">
+      <button id="launch-button" class="px-8 py-4 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg text-lg hover:shadow-xl hover:shadow-circuit-blue/30 transition-all duration-300 transform hover:scale-105">
         <span class="flex items-center justify-center">
-          <i data-feather="rocket" class="w-5 h-5 mr-2"></i>
-          Start Free Trial
+          <i data-feather="arrow-up-right" class="w-5 h-5 mr-2"></i>
+          Launch
         </span>
       </button>
     </div>
   </div>
 </section>
+<script>
+document.getElementById('launch-button')?.addEventListener('click', () => {
+  window.location.href = './circuitjs.html';
+});
+</script>

@@ -4,35 +4,46 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 dark:bg-dark-bg/80 bg-light-bg/80 backdrop-blur-md border-b border-white/10 dark:border-white/10 border-gray-200 transition-colors duration-300" id="navbar">
   <div class="container mx-auto px-6 py-4">
     <div class="flex items-center justify-between">
-      <!-- Logo -->
-      <div class="flex items-center space-x-2" id="logo">
-        <div class="w-8 h-8 bg-gradient-to-r from-circuit-blue to-circuit-purple rounded-lg flex items-center justify-center">
-          <i data-feather="zap" class="w-5 h-5 text-white"></i>
-        </div>
-        <span class="text-xl font-bold text-white dark:text-white text-text-primary-light">CircuitSim</span>
-      </div>
+
+    <!-- Logo -->
+          <div class="flex items-center space-x-2" id="logo">
+            <div class="rounded-lg flex items-center justify-center overflow-hidden">
+              <img 
+                src="./logosymbol.png" 
+                alt="SimC Logo" 
+                class="w-8 h-8 object-contain"
+              />
+            </div>
+            <span class="text-xl font-bold text-slate-800 dark:text-white text-text-primary-light">SimC</span>
+          </div>
       
       <!-- Desktop Navigation -->
       <div class="hidden md:flex items-center space-x-8" id="nav-links">
         <a href="#home" class="nav-link text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Home</a>
         <a href="#features" class="nav-link text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Features</a>
+        <a href="#banner" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Traction</a>
         <a href="#about" class="nav-link text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">About</a>
         <a href="#contact" class="nav-link text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Contact</a>
       </div>
       
       <!-- Theme Toggle -->
-      <button class="hidden md:block w-10 h-10 bg-dark-secondary dark:bg-dark-secondary bg-light-secondary border border-white/10 dark:border-white/10 border-gray-300 rounded-lg flex items-center justify-center hover:border-circuit-blue/50 transition-all duration-300" id="theme-toggle" aria-label="Toggle theme">
-        <i data-feather="sun" class="w-5 h-5 text-circuit-blue block dark:hidden"></i>
+      <button class="hidden md:block pl-2 w-10 h-10 bg-dark-secondary dark:bg-dark-secondary bg-slate-200 border border-white/10 dark:border-white/10 border-gray-300 rounded-lg flex items-center justify-center hover:border-circuit-blue/50 transition-all duration-300" id="theme-toggle" aria-label="Toggle theme">
+        <i data-feather="sun" class="w-5 h-5 text-yellow-600 block dark:hidden"></i>
         <i data-feather="moon" class="w-5 h-5 text-circuit-blue hidden dark:block"></i>
       </button>
       
-      <!-- CTA Button -->
-      <button class="hidden md:block px-6 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-circuit-blue/25 transition-all duration-300" id="nav-cta">
-        Launch Now
-      </button>
-      
+      <!-- CTA Buttons -->
+      <div style="display: flex; gap: 10px;"> 
+        <button class="hidden md:block px-5 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-circuit-blue/25 transition-all duration-300" id="nav-cta">
+          Launch Now
+        </button>
+        <button class="hidden md:block px-5 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-circuit-blue/25 transition-all duration-300" id="nav-cta-d">
+          Download App
+        </button>
+      </div>
+
       <!-- Mobile Menu Button -->
-      <button class="md:hidden text-white" id="mobile-menu-btn">
+      <button class="md:hidden text-slate-800 dark:text-white text-text-primary-light" id="mobile-menu-btn">
         <i data-feather="menu" class="w-6 h-6"></i>
       </button>
     </div>
@@ -42,18 +53,23 @@
       <div class="flex flex-col space-y-4">
         <a href="#home" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Home</a>
         <a href="#features" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Features</a>
+        <a href="#banner" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Traction</a>
         <a href="#about" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">About</a>
         <a href="#contact" class="text-text-secondary dark:text-text-secondary text-text-secondary-light hover:text-circuit-blue transition-colors">Contact</a>
         
         <!-- Mobile Theme Toggle -->
-        <button class="w-10 h-10 bg-dark-secondary dark:bg-dark-secondary bg-light-secondary border border-white/10 dark:border-white/10 border-gray-300 rounded-lg flex items-center justify-center hover:border-circuit-blue/50 transition-all duration-300 self-start" id="mobile-theme-toggle" aria-label="Toggle theme">
-          <i data-feather="sun" class="w-5 h-5 text-circuit-blue block dark:hidden"></i>
+        <button class="w-10 h-10 bg-dark-secondary dark:bg-dark-secondary bg-slate-300 border border-white/10 dark:border-white/10 border-gray-300 rounded-lg flex items-center justify-center hover:border-circuit-blue/50 transition-all duration-300 self-start" id="mobile-theme-toggle" aria-label="Toggle theme">
+          <i data-feather="sun" class="w-5 h-5 text-yellow-600 block dark:hidden"></i>
           <i data-feather="moon" class="w-5 h-5 text-circuit-blue hidden dark:block"></i>
         </button>
-        
-        <button class="px-6 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg w-fit">
+             <div style="display: flex; gap: 10px;"> 
+        <button class="px-6 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg w-fit" id="nav-mob-cta">
           Launch Now
         </button>
+        <button class="px-6 py-2 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg w-fit" id="nav-mob-cta-d">
+          Download App
+        </button>
+        </div>
       </div>
     </div>
   </div>
@@ -124,4 +140,30 @@
 
   // Initialize theme toggle when DOM is loaded
   document.addEventListener('DOMContentLoaded', initThemeToggle);
+
+  // Define the mapping between IDs and their target URLs
+  const navButtonActions = [
+    {
+      ids: ['nav-cta', 'nav-mob-cta'],
+      url: './circuitjs.html'
+    },
+    {
+      ids: ['nav-cta-d', 'nav-mob-cta-d'],
+      url: './release'
+    }
+  ];
+
+  // Iterate through the array of button actions
+  navButtonActions.forEach(actionGroup => {
+    // For each action group, iterate through its associated IDs
+    actionGroup.ids.forEach(id => {
+      const element = document.getElementById(id);
+      // If the element exists, add a click listener
+      if (element) {
+        element.addEventListener('click', () => {
+          window.location.href = actionGroup.url;
+        });
+      }
+    });
+  });
 </script>

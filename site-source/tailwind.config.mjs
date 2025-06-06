@@ -13,7 +13,7 @@ export default {
         'light-bg': '#FFFFFF',
         'light-secondary': '#F8F9FA',
         'text-primary': '#FFFFFF',
-        'text-secondary': '#B8B8CC',
+        'text-secondary': '#7c7c8a',
         'text-primary-light': '#1A1A24',
         'text-secondary-light': '#6B7280'
       },

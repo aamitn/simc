@@ -103,7 +103,7 @@
           Revolutionary
         </span>
         <br>
-        <span class="text-white dark:text-white text-text-primary-light">Circuit Simulation</span>
+        <span class="text-indigo-400 dark:text-white text-text-primary-light">Circuit Simulation</span>
       </h1>
       
       <!-- Subheading -->
@@ -116,14 +116,14 @@
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12" id="hero-cta">
         <button class="px-8 py-4 bg-gradient-to-r from-circuit-blue to-circuit-purple text-white font-semibold rounded-lg text-lg hover:shadow-xl hover:shadow-circuit-blue/30 transition-all duration-300 transform hover:scale-105" id="launch-btn">
           <span class="flex items-center">
-            <i data-feather="play" class="w-5 h-5 mr-2"></i>
+            <i data-feather="play-circle" class="w-5 h-5 mr-2"></i>
             Launch Now
           </span>
         </button>
-        <button class="px-8 py-4 border-2 border-circuit-blue text-circuit-blue font-semibold rounded-lg text-lg hover:bg-circuit-blue hover:text-dark-bg transition-all duration-300" id="demo-btn">
+        <button class="px-8 py-4 border-2 border-circuit-blue text-circuit-blue font-semibold rounded-lg text-lg hover:bg-circuit-blue hover:text-dark-bg transition-all duration-300" id="download-btn">
           <span class="flex items-center">
-            <i data-feather="video" class="w-5 h-5 mr-2"></i>
-            Watch Demo
+            <i data-feather="download-cloud" class="w-5 h-5 mr-2"></i>
+            Download App
           </span>
         </button>
       </div>
@@ -155,6 +155,15 @@
 </section>
 
 <script>
+    // Add click handlers for the buttons
+  document.getElementById('launch-btn')?.addEventListener('click', () => {
+    window.location.href = './circuitjs.html';
+  });
+
+  document.getElementById('download-btn')?.addEventListener('click', () => {
+    window.location.href = './release';
+  });
+
   // Counter animation for stats
   function animateCounter(element: HTMLElement, target: number) {
     let current = 0;
