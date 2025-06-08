@@ -240,22 +240,19 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      # --- FIXED STEP FOR MACOS CODE SIGNING ---
+      # --- MODIFIED STEP FOR MACOS CODE SIGNING ---
       # Step 4: Create a temporary keychain and import your self-signed .p12 certificate
       - name: Create temporary keychain and import certificate
         env:
           P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }} 
           P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
-          TEMP_KEYCHAIN_NAME: github-actions-temp-keychain # Keep the name here
+          TEMP_KEYCHAIN_NAME: github-actions-temp-keychain
         run: |
-          # Define TEMP_KEYCHAIN_PATH using shell expansion directly in the run block.
-          # $HOME is guaranteed to resolve to the runner's home directory.
           export TEMP_KEYCHAIN_PATH="$HOME/Library/Keychains/${{ env.TEMP_KEYCHAIN_NAME }}.keychain"
 
           echo "Resolved TEMP_KEYCHAIN_NAME: ${{ env.TEMP_KEYCHAIN_NAME }}"
-          echo "Resolved TEMP_KEYCHAIN_PATH: ${TEMP_KEYCHAIN_PATH}" # Use shell variable here for echo
+          echo "Resolved TEMP_KEYCHAIN_PATH: ${TEMP_KEYCHAIN_PATH}"
           
-          # Ensure the directory exists before trying to create the keychain
           mkdir -p "$HOME/Library/Keychains/"
 
           echo "Creating new temporary keychain: ${TEMP_KEYCHAIN_PATH}"
@@ -269,20 +266,29 @@ jobs:
 
           echo "Decoding Base64 P12 and importing certificate into keychain"
           echo "$P12_BASE64" | base64 --decode > cert.p12
-          security import cert.p12 -k "${TEMP_KEYCHAIN_PATH}" -P "$P12_PASSWORD" \
+          
+          # Capture output and potential errors from security import
+          # We redirect stderr (2) to stdout (1) so all output is captured by 'IMPORT_OUTPUT'
+          IMPORT_OUTPUT=$(security import cert.p12 -k "${TEMP_KEYCHAIN_PATH}" -P "$P12_PASSWORD" \
             -T /usr/bin/codesign \
             -T /usr/bin/security \
             -T /usr/bin/productbuild \
-            -T /usr/bin/pkgbuild
+            -T /usr/bin/pkgbuild 2>&1) 
+          
+          echo "--- Output from 'security import cert.p12' ---"
+          echo "$IMPORT_OUTPUT"
+          echo "----------------------------------------------"
 
           rm cert.p12 # Remove the temporary .p12 file for security
 
-          echo "Verifying identities in keychain (for debugging purposes):"
-          # This should now show your imported identity if the cert is valid for codesigning
-          security find-identity -p codesigning "${TEMP_KEYCHAIN_PATH}" || true 
+          # NEW CHECK: List all identities regardless of their intended purpose
+          echo "Verifying ALL identities in keychain (regardless of code signing policy):"
+          security find-identity "${TEMP_KEYCHAIN_PATH}" || true # No -p codesigning here!
+
+          echo "Verifying identities for Code Signing policy (as before):"
+          security find-identity -p codesigning "${TEMP_KEYCHAIN_PATH}" || true
 
           # Export the temporary keychain name and path for subsequent steps
-          # Exporting to GITHUB_ENV makes it available to subsequent steps in the same job
           echo "TEMP_KEYCHAIN_PATH=${TEMP_KEYCHAIN_PATH}" >> "$GITHUB_ENV"
           echo "TEMP_KEYCHAIN_NAME=${{ env.TEMP_KEYCHAIN_NAME }}" >> "$GITHUB_ENV"
 
@@ -298,16 +304,16 @@ jobs:
         working-directory: './${{ env.ELECTRON_SOURCE }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Now use the variable set in GITHUB_ENV from the previous step
           CSC_KEYCHAIN: ${{ env.TEMP_KEYCHAIN_PATH }}
           CSC_P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
           CSC_IDENTITY_AUTO_DISCOVERY: false 
-          # IMPORTANT: If 'security find-identity' still doesn't find your identity,
-          # or if the error persists, you might need to explicitly name the identity.
-          # The name should match the "Common Name" (CN) you used when creating the self-signed cert.
-          # Get this exact name from 'security find-identity' output once it's successfully listed.
-          # CSC_NAME: "Your Self-Signed Electron Dev" 
-          # CSC_INSTALLER_NAME: "Your Self-Signed Electron Dev" 
+          # IMPORTANT: If 'security find-identity -p codesigning' still shows 0 identities,
+          # and if the general 'security find-identity' *does* show an identity,
+          # then you MUST uncomment and set CSC_NAME/CSC_INSTALLER_NAME below
+          # to the exact Common Name (CN) of your self-signed certificate.
+          # Example: "My Self-Signed Electron Dev"
+          # CSC_NAME: "Your Certificate Common Name Here" 
+          # CSC_INSTALLER_NAME: "Your Certificate Common Name Here" 
         run: |
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
