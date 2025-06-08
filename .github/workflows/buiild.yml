@@ -214,11 +214,12 @@ jobs:
           npm run publish
         working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder        
   
+  
   # Electron build on  MacOS
   electron-macos:
     needs: build
-    runs-on: macos-latest # Changed from ubuntu-latest to macos-latest
-    name: Electron MacOS Publish (dmg,pkg)    
+    runs-on: macos-latest
+    name: Electron MacOS Publish (dmg,pkg)      
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout repository
@@ -239,15 +240,83 @@ jobs:
           cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
-      # This step assumes there's a Node.js project in the 'app' directory
-      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
-      - name: ELECTRON-Install Node.js dependencies and publish Electron 'app'
+      # --- NEW STEPS FOR MACOS CODE SIGNING ---
+      # Step 4: Create a temporary keychain and import your self-signed .p12 certificate
+      - name: Create temporary keychain and import certificate
+        env:
+          # IMPORTANT: Store your Base64 encoded .p12 and its password as GitHub Secrets
+          # Example secrets: MACOS_SELF_SIGNED_P12, MACOS_SELF_SIGNED_P12_PASSWORD
+          P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }} 
+          P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
+          # Define a temporary keychain name and path for this job
+          TEMP_KEYCHAIN_NAME: github-actions-temp-keychain
+          TEMP_KEYCHAIN_PATH: ~/Library/Keychains/${{ env.TEMP_KEYCHAIN_NAME }}.keychain
+        run: |
+          echo "Creating new temporary keychain: ${{ env.TEMP_KEYCHAIN_PATH }}"
+          # Create a new temporary keychain with a password
+          security create-keychain -p "$P12_PASSWORD" "${{ env.TEMP_KEYCHAIN_PATH }}"
+          # Unlock the created keychain
+          security unlock-keychain -p "$P12_PASSWORD" "${{ env.TEMP_KEYCHAIN_PATH }}"
+          # Set keychain timeout to 1 hour (3600 seconds) and lock it immediately
+          security set-keychain-settings -t 3600 -l "${{ env.TEMP_KEYCHAIN_PATH }}"
+
+          echo "Setting temporary keychain as default and adding to search list"
+          # Set this new keychain as the default keychain
+          security default-keychain -s "${{ env.TEMP_KEYCHAIN_PATH }}"
+          # Add it to the keychain search list
+          security list-keychains -s "${{ env.TEMP_KEYCHAIN_PATH }}"
+
+          echo "Decoding and importing P12 certificate into keychain"
+          # Decode the Base64 P12 content from the secret into a temporary file
+          echo "$P12_BASE64" | base64 --decode > cert.p12
+          # Import the certificate into the temporary keychain
+          # -T flags grant necessary access to signing tools (codesign, security, productbuild, pkgbuild)
+          security import cert.p12 -k "${{ env.TEMP_KEYCHAIN_PATH }}" -P "$P12_PASSWORD" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security \
+            -T /usr/bin/productbuild \
+            -T /usr/bin/pkgbuild
+            # If Electron Forge itself needs direct access to the keychain, uncomment the following:
+            # -T /usr/local/bin/electron-forge 
+
+          rm cert.p12 # Remove the temporary .p12 file for security
+
+          echo "Verifying identities in keychain (for debugging purposes):"
+          # List identities in the newly created keychain.
+          # '|| true' ensures the step doesn't fail if no identity is immediately found,
+          # allowing you to see logs for further debugging.
+          security find-identity -p codesigning "${{ env.TEMP_KEYCHAIN_PATH }}" || true 
+
+          # Export the temporary keychain name and path so subsequent steps can use them
+          echo "TEMP_KEYCHAIN_PATH=${{ env.TEMP_KEYCHAIN_PATH }}" >> "$GITHUB_ENV"
+          echo "TEMP_KEYCHAIN_NAME=${{ env.TEMP_KEYCHAIN_NAME }}" >> "$GITHUB_ENV"
+
+      # Step 5: Install Electron Node.js dependencies (moved from Step 4)
+      - name: Install Electron Node.js dependencies
+        working-directory: './${{ env.ELECTRON_SOURCE }}'
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci # Use 'ci' for clean installs in CI environments
-          echo "Setting Environment Var for auth token..."
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+      # Step 6: Run Electron 'publish' with custom keychain configuration (moved from Step 4)
+      - name: ELECTRON-Publish Electron 'app' with signing
+        working-directory: './${{ env.ELECTRON_SOURCE }}'
+        env:
+          # Set GITHUB_TOKEN if your 'npm run publish' command interacts with GitHub (e.g., for releases)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # These environment variables are crucial for Electron Forge/electron-osx-sign
+          # to find and use your certificate from the custom keychain.
+          # CSC_KEYCHAIN should point to the temporary keychain name or path.
+          CSC_KEYCHAIN: ${{ env.TEMP_KEYCHAIN_NAME }} # Using the name of the keychain
+          CSC_P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
+          # Setting this to 'false' forces the signing process to rely on explicitly
+          # provided keychain and password, rather than auto-discovery.
+          CSC_IDENTITY_AUTO_DISCOVERY: false 
+          # If your self-signed certificate has a specific common name (e.g., "My Self-Signed Dev ID"),
+          # uncomment and set these to match the exact identity name as seen in 'security find-identity'.
+          # This explicitly tells the signing tool which identity to use.
+          # CSC_NAME: "Your Self-Signed Identity Name" # For .app bundle signing
+          # CSC_INSTALLER_NAME: "Your Self-Signed Identity Name" # For .pkg installer signing
+        run: |
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
-        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
