@@ -130,13 +130,9 @@ jobs:
           path: ${{ env.BUILD_OUTPUT }}
 
 
-  build-electron:
+  build-electron-macos:
     needs: build-and-deploy
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
+    runs-on: macos-latest # Changed from ubuntu-latest to macos-latest
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout repository
@@ -153,32 +149,21 @@ jobs:
       - name: Set up Node.js LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'npm'
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      # Step 4: Set Environment Variable for Linux
-      - name: Set Environment Variable (Linux)
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          echo "Setting Environment Var for auth token on Linux..."
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-
-      # Step 5: Set Environment Variable for Windows
-      - name: Set Environment Variable (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Write-Output "Setting Environment Var for auth token on Windows..."
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-      # Step 6: Install Electron Node.js dependencies and run publish for the 'app' directory
-      - name: Install Node.js dependencies and publish Electron 'app'
-        shell: bash
+      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # This step assumes there's a Node.js project in the 'app' directory
+      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
+      - name: ELECTRON-Install Node.js dependencies and publish Electron 'app'
         run: |
           echo "Installing npm dependencies in 'app' directory..."
-          npm ci
+          npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
-        working-directory: './${{ env.ELECTRON_SOURCE }}'
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
+
+  
