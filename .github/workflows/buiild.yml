@@ -135,7 +135,7 @@ jobs:
     needs: build-and-deploy
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       # Step 1: Checkout the repository code
@@ -157,6 +157,16 @@ jobs:
           cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
+      - name: Set GITHUB_TOKEN on Linux/macOS
+        if: runner.os != 'Windows'
+        run: export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set GITHUB_TOKEN on Windows
+        if: runner.os == 'Windows'
+        run: |
+          echo "Setting env in PowerShell..."
+          $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+
       # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory
       # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
@@ -164,8 +174,6 @@ jobs:
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci # Use 'ci' for clean installs in CI environments
-          echo "Setting Environment Var for auth token..."
-          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
         working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
