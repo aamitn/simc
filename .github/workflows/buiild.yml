@@ -132,7 +132,7 @@ jobs:
 
   # Electron build on all OS
   build-electron:
-    needs: build-shared
+    needs: build-and-deploy
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
