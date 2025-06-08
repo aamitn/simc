@@ -130,13 +130,17 @@ jobs:
           path: ${{ env.BUILD_OUTPUT }}
 
 
-  # Electron build on  Ubuntu
-  build-electron-ubuntu:
+  build-electron:
     needs: build-and-deploy
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            shell: bash
+          - os: windows-latest
+            shell: pwsh
 
     steps:
       # Step 1: Checkout the repository code
@@ -150,34 +154,27 @@ jobs:
           name: site-artifact
           path: ${{ env.BUILD_OUTPUT }}
 
-      # Step 3: Set up Node.js LTS
+      # Step 3: Setup Node.js
       - name: Set up Node.js LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*' # Installs the latest LTS Node.js version
-          cache: 'npm' # Cache npm dependencies for faster installs
+          node-version: 'lts/*'
+          cache: 'npm'
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      # Step 4: Install Electron Node.js dependencies and set GITHUB_TOKEN
-      - name: Prepare for Electron build
-        working-directory: './${{ env.ELECTRON_SOURCE }}'
+      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory
+      - name: Install Node.js dependencies and publish Electron 'app'
+        shell: ${{ matrix.shell }}
         run: |
-          echo "Installing npm dependencies in '${{ env.ELECTRON_SOURCE }}' directory..."
-          npm ci # Use 'ci' for clean installs in CI environments
-
-          echo "Setting Environment Var for auth token..."
-          # Conditional logic for setting GITHUB_TOKEN based on OS
-          if contains(runner.os, 'Windows'); then
-            echo "Setting GITHUB_TOKEN for Windows (Powershell)"
-            echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          else
-            echo "Setting GITHUB_TOKEN for Linux/macOS (Bash)"
-            echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
-          fi
-
-      # Step 5: Run publish for the 'app' directory (Electron Build)
-      - name: Run Electron 'publish'
-        working-directory: './${{ env.ELECTRON_SOURCE }}'
-        run: |
-          echo "Running 'npm run publish' in '${{ env.ELECTRON_SOURCE }}' directory..."
+          echo "Installing npm dependencies in 'app' directory..."
+          npm ci
+          if ("${{ matrix.os }}" -eq "ubuntu-latest") {
+            echo "Setting Environment Var for auth token..."
+            export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          } else {
+            echo "Setting Environment Var for auth token in PowerShell..."
+            $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          }
+          echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
+        working-directory: './${{ env.ELECTRON_SOURCE }}'
