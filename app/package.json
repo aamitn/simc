@@ -1,6 +1,6 @@
 {
   "name": "SimC",
-  "version": "1.8.22",
+  "version": "1.8.23",
   "description": "Interactive Circuit Simulator",
   "main": "main.js",
   "scripts": {
@@ -11,11 +11,12 @@
     "publish": "npm run copy-site && electron-forge publish"
   },
   "repository": "https://github.com/aamitn/simc",
+  "license": "GPL",
   "keywords": [
-    "eda",
+    "simulation",
     "electronics",
     "circuits",
-    "education"
+    "bitmutex"
   ],
   "author": "Bitmutex Technologies",
   "devDependencies": {
