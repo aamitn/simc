@@ -76,8 +76,7 @@ module.exports = {
       name: '@electron-forge/maker-pkg',
       config: {
       icon: './icons/icon.icns',
-      keychain: 'my-secret-ci-keychain'
-        // other configuration options
+      //keychain: 'my-secret-ci-keychain'
       }
     },
   ],
