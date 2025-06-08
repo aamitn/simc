@@ -128,6 +128,8 @@ jobs:
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
         working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
