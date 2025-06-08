@@ -136,11 +136,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            shell: bash
-          - os: windows-latest
-            shell: pwsh
 
     steps:
       # Step 1: Checkout the repository code
@@ -164,17 +159,16 @@ jobs:
 
       # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory
       - name: Install Node.js dependencies and publish Electron 'app'
-        shell: ${{ matrix.shell }}
+        shell: bash
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci
-          if ("${{ matrix.os }}" -eq "ubuntu-latest") {
-            echo "Setting Environment Var for auth token..."
+          echo "Setting Environment Var for auth token..."
+          if [ "${{ runner.os }}" = "Linux" ]; then
             export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          } else {
-            echo "Setting Environment Var for auth token in PowerShell..."
-            $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          }
+          else
+            echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          fi
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
         working-directory: './${{ env.ELECTRON_SOURCE }}'
