@@ -60,7 +60,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: ASTRO: Build site
+      - name: ASTRO - Build site
         run: |
           npm ci
           npx --no-install astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
