@@ -67,7 +67,7 @@ jobs:
           cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: |
             ${{ env.ASTRO_SOURCE }}/package-lock.json
-            app/package-lock.json
+            ${{ env.ELECTRON_SOURCE }}/package-lock.json
 
 
       # Step 4: Setup GitHub Pages environment
