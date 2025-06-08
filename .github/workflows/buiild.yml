@@ -266,15 +266,7 @@ jobs:
 
           echo "KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
           echo "TEMP_KEYCHAIN_NAME=$TEMP_KEYCHAIN_NAME" >> "$GITHUB_ENV"
-          
-          # Extract the certificate for optional trust
-          openssl pkcs12 -in signing_cert.p12 -out temp_cert.cer -nokeys -clcerts -passin pass:"$P12_PASSWORD"
 
-          # Attempt to add to keychain as trusted (can skip if signing works without it)
-          echo "Attempting to add certificate as trusted (non-blocking)..."
-          security add-trusted-cert -d -r trustRoot -k "$TEMP_KEYCHAIN_NAME" temp_cert.cer || echo "Trust step skipped or failed (expected in CI)"
-
-          rm temp_cert.cer
           rm signing_cert.p12
           
 
