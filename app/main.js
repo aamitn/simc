@@ -1,87 +1,154 @@
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
-const Menu = electron.Menu
+// main.js
 
-const path = require('path')
-const url = require('url')
+const { app, BrowserWindow, Menu, dialog, ipcMain, globalShortcut, session } = require('electron');
+const path = require('path');
+const url = require('url');
+const fs = require('fs/promises'); // Use fs.promises for async file operations
+const { updateElectronApp } = require('update-electron-app');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-var windows = [];
+updateElectronApp(); // additional configuration options available
 
-Menu.setApplicationMenu(false);
+if (require('electron-squirrel-startup')) app.quit(); //handle electron squirrel
 
-// save arguments
-global.sharedObject = {prop1: process.argv};
+// Keep a global reference of the window object.
+// Use an array if your app supports multiple windows.
+const windows = [];
 
-function createWindow () {
+// Disable default application menu (optional, based on your original code)
+Menu.setApplicationMenu(null);
+
+// Store initial arguments for later retrieval by the renderer
+let initialAppArguments = process.argv;
+
+function createWindow() {
   // Create the browser window.
-  var mainWindow = new BrowserWindow({width: 800, 
-    height: 600,
-    webPreferences: { nativeWindowOpen: true,
-                      preload: path.join(__dirname, 'preload.js')
+  const mainWindow = new BrowserWindow({
+    icon: './icons/icon.png', // Set your icon path
+    width: 1200, // Set your desired default width
+    height: 800, // Set your desired default height
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      // IMPORTANT: contextIsolation should be true for security
+      contextIsolation: true,
+      // IMPORTANT: nodeIntegration should be false for security with contextIsolation
+      nodeIntegration: false,
+      // Enable nativeWindowOpen if your content needs to open new browser windows
+      nativeWindowOpen: true,
+      webviewTag: false,
+      // Add these settings for iframes
+      additionalArguments: ['--enable-features=IsolateOrigins'],
+      webSecurity: true
     }
-  })
-  windows.push(mainWindow);
-
-  // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    // pathname: path.join(__dirname, 'index.html'),
-    pathname: path.join(__dirname, 'war/circuitjs.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    var i = windows.indexOf(mainWindow);
-    if (i >= 0)
-      windows.splice(i, 1);
-  })
-
-  mainWindow.webContents.on('new-window', (evt, url, frameName, disposition, options) => {
-	if (disposition == 'save-to-disk')
-		return;
-	if (!url.endsWith("circuitjs.html"))
-		return;
-        // app is opening a new window.  override it by creating a BrowserWindow to work around an electron bug (11128)
-	evt.preventDefault();
-	createWindow();
   });
 
+  windows.push(mainWindow);
+  
+  session.defaultSession.setPreloads([path.join(__dirname, 'preload.js')]);
+
+  const htmlFilePath = path.join(app.getAppPath(), 'site', 'circuitjs.html');
+
+  // Load the HTML file for the app.
+  mainWindow.loadURL(url.format({
+    //pathname: path.join(__dirname, '..', 'site/circuitjs.html'), // For automatic builds
+    //pathname: path.join(__dirname, 'site/circuitjs.html'), // For manual builds
+    pathname: htmlFilePath,
+    protocol: 'file:',
+    slashes: true
+  }));
+
+
+
+  // Register DevTools shortcut
+  globalShortcut.register('CommandOrControl+Shift+I', () => {
+    mainWindow.webContents.toggleDevTools();
+  });
+
+
+  // Emitted when the window is closed.
+  mainWindow.on('closed', () => {
+    // Dereference the window object.
+    const i = windows.indexOf(mainWindow);
+    if (i > -1) {
+      windows.splice(i, 1);
+    }
+  });
+
+  // Handle new-window events for Electron's browser windows
+  mainWindow.webContents.on('new-window', (evt, newUrl, frameName, disposition, options) => {
+    if (disposition === 'save-to-disk') {
+      return; // Let Electron handle save-to-disk disposition
+    }
+    if (!newUrl.endsWith("circuitjs.html")) {
+      return; // Only handle new windows for your specific HTML
+    }
+
+    evt.preventDefault(); // Prevent default Electron new window behavior
+    createWindow(); // Create a new browser window using your function
+  });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.whenReady().then(() => {
+  createWindow();
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (windows.length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
 
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (windows.length == 0) {
-    createWindow()
+// --- IPC Handlers (for communication with renderer process) ---
+
+ipcMain.handle('show-save-dialog', async (event, options) => {
+  const focusedWindow = BrowserWindow.fromWebContents(event.sender);
+  const { canceled, filePath } = await dialog.showSaveDialog(focusedWindow, options);
+  return { canceled, filePath };
+});
+
+ipcMain.handle('save-file', async (event, filePath, text) => {
+  try {
+    await fs.writeFile(filePath, text, 'utf-8');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to save file:', error);
+    return { success: false, error: error.message };
   }
-})
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+ipcMain.handle('show-open-dialog', async (event, options) => {
+  const focusedWindow = BrowserWindow.fromWebContents(event.sender);
+  const { canceled, filePaths } = await dialog.showOpenDialog(focusedWindow, options);
+  return { canceled, filePaths };
+});
+
+ipcMain.handle('read-file', async (event, filePath) => {
+  try {
+    const data = await fs.readFile(filePath, 'utf-8');
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to read file:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('toggle-devtools', (event) => {
+  event.sender.toggleDevTools();
+});
+
+ipcMain.handle('get-initial-app-arguments', () => {
+  return initialAppArguments;
+});

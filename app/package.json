@@ -1,20 +1,40 @@
 {
-  "name": "Circuit JS1",
-  "version": "0.0.1",
+  "name": "SimC",
+  "version": "1.8.22",
   "description": "Interactive Circuit Simulator",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "copy-site": "node copy-site.js",
+    "start": "npm run copy-site && electron-forge start",
+    "package": "npm run copy-site && electron-forge package",
+    "make": "npm run copy-site && electron-forge make",
+    "publish": "npm run copy-site && electron-forge publish"
   },
-  "repository": "https://github.com/sharpie7/circuitjs1",
+  "repository": "https://github.com/aamitn/simc",
   "keywords": [
     "eda",
     "electronics",
     "circuits",
     "education"
   ],
-  "author": "Iain Sharp, Paul Falstad",
+  "author": "Bitmutex Technologies",
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.1",
+    "@electron-forge/maker-appx": "^7.8.1",
+    "@electron-forge/maker-deb": "^7.8.1",
+    "@electron-forge/maker-dmg": "^7.8.1",
+    "@electron-forge/maker-pkg": "^7.8.1",
+    "@electron-forge/maker-rpm": "^7.8.1",
+    "@electron-forge/maker-squirrel": "^7.8.1",
+    "@electron-forge/maker-zip": "^7.8.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
+    "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.8.1",
+    "@electron/fuses": "^1.8.0",
     "electron": ">=9.3.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "update-electron-app": "^3.1.1"
   }
 }

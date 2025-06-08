@@ -9,6 +9,14 @@ For a hosted version of the application see:
 * Bitmutex: [https://www.app.bitmutex.com/simc/](https://www.app.bitmutex.com/simc/)
 * GH Pages: [https://www.aamitn.github.io/simc/](https://www.aamitn.github.io/simc/)
 
+## Local Build Script
+
+| **Option/Switch**  | **Description**                                                                         | **Example Usage**        |
+|--------------------|-----------------------------------------------------------------------------------------|--------------------------|
+| --npm, -n          | Package Manager: Use npm. This is the default if no package manager option is provided. | build.bat --npm          |
+| --pnpm, -p         | Package Manager: Use pnpm for Node.js.                                                  | build.bat --pnpm         |
+| --start-server, -s | Start HTTP Server: After the build process completes. Make sure python is installed     | build.bat --start-server |
+
 
 ## Building the web application
 
@@ -79,7 +87,7 @@ GWT will build its output in to the "war" directory. In the "war" directory the 
 ### Development using cloud containers
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and the appropriate remote extension: either [Gitpod Extension](https://marketplace.visualstudio.com/items?itemName=gitpod.gitpod-desktop) or [Codespaces Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces).
-2. Open your fork of the `circuitjs1` repository in your chosen provider's dev container.
+2. Open your fork of the `simc` repository in your chosen provider's dev container.
 3. This should open a new tab in your browser showing VS Code. Click in the green button in the bottom left corner, then select "Open in VS Code Desktop" in the popup menu that opened. Click "Allow" in all URL popups and authenticate using github if asked.
 
 Once you have successfully connected your local VS Code to the remote workspace, you should be able to see the content of the remote container in your local VS Code. You can now continue with the setup:
@@ -209,16 +217,15 @@ The [Electron](https://electronjs.org/) project allows web applications to be di
 The general approach to building an Electron application for a particular platform is documented [here](https://electronjs.org/docs/tutorial/application-distribution). The following instructions apply this approach to circuit JS.
 
 To build the Electron application:
-* Compile the application using GWT, as above.
-* Download and unpack a [pre-built Electron binary directory](https://github.com/electron/electron/releases) version 9.3.2 for the target platform.
-* Copy the "app" directory from this repository to the location specified [here](https://electronjs.org/docs/tutorial/application-distribution) in the Electron binary directory structure.
-* Copy the "war" directory, containing the compiled CircuitJS1 application, in to the "app" directory the Electron binary directory structure.
-* Run the "Electron" executable file. It should automatically load CircuitJS1.
+* Compile the astro frontend in site-source and the main application using Gradle, as [above](#building-the-web-application).
+* Download and unpack a [pre-built Electron binary directory](https://github.com/electron/electron/releases) latest version for the target platform.
+* Copy the `app` directory from [this](https://github.com/aamint/simc) repository to the location specified [here](https://electronjs.org/docs/tutorial/application-distribution) in the Electron binary directory structure.
+  >Copy `app` to `electron/resources` (in Win/Linux) OR to `electron/Electron.app/Contents/Resources/` in MacOS
+* Copy the `site` directory, containing the compiled SimC application, in to the `app` directory of the Electron binary directory structure as mentioned above.
+* Run the "Electron" executable file. It should automatically load SimC.
 
 Known limitations of the Electron application:
 * "Create short URL" on "Export as URL" doesn't work as it relies on server support.
-
-Thanks to @Immortalin for the initial work in applying Electron to CircuitJS1.
 
 ## License
 
