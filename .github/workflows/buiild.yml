@@ -265,7 +265,11 @@ jobs:
           security list-keychains -s "${TEMP_KEYCHAIN_PATH}"
 
           echo "Decoding Base64 P12 and importing certificate into keychain"
+          # Extract and trust certificate manually
           echo "$P12_BASE64" | base64 --decode > cert.p12
+          openssl pkcs12 -in cert.p12 -out cert.cer -nokeys -passin pass:"$P12_PASSWORD"
+          security add-trusted-cert -d -r trustRoot -k "${TEMP_KEYCHAIN_PATH}" -p codeSign cert.cer
+          rm cert.cer
           
           # Capture output and potential errors from security import
           # We redirect stderr (2) to stdout (1) so all output is captured by 'IMPORT_OUTPUT'
@@ -284,12 +288,6 @@ jobs:
           # NEW CHECK: List all identities regardless of their intended purpose
           echo "Verifying ALL identities in keychain (regardless of code signing policy):"
           security find-identity "${TEMP_KEYCHAIN_PATH}" || true # No -p codesigning here!
-
-          # Get certificate SHA-1 hash (you already know it from logs, or re-query)
-          CERT_SHA1=$(security find-certificate -a -Z "${TEMP_KEYCHAIN_PATH}" | awk '/SHA-1/{print $3}' | head -n1)
-
-          # Mark it as trusted for code signing
-          security add-trusted-cert -d -r trustRoot -k "${TEMP_KEYCHAIN_PATH}" -p codeSign $(security find-certificate -Z -c "Bitmutex Technologies Root CA" "${TEMP_KEYCHAIN_PATH}" | grep "path" | awk '{print $2}')
 
           echo "Verifying identities for Code Signing policy (as before):"
           security find-identity -p codesigning "${TEMP_KEYCHAIN_PATH}" || true
