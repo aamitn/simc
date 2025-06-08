@@ -76,7 +76,7 @@ module.exports = {
       name: '@electron-forge/maker-pkg',
       config: {
       icon: './icons/icon.icns',
-      keychain: 'github-actions-temp-keychain'
+      keychain: 'github-signing.keychain-db'
       }
     },
   ],
