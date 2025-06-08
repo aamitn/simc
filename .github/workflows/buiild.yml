@@ -265,8 +265,9 @@ jobs:
           security list-keychains -s "${TEMP_KEYCHAIN_PATH}"
 
           echo "Decoding Base64 P12 and importing certificate into keychain"
-          # Extract and trust certificate manually
           echo "$P12_BASE64" | base64 --decode > cert.p12
+
+          # Extract and trust certificate manually
           openssl pkcs12 -in cert.p12 -out cert.cer -nokeys -passin pass:"$P12_PASSWORD"
           security add-trusted-cert -d -r trustRoot -k "${TEMP_KEYCHAIN_PATH}" -p codeSign cert.cer
           rm cert.cer
@@ -321,3 +322,8 @@ jobs:
         run: |
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
+          
+      - name: Cleanup temporary keychain
+        if: always()
+        run: |
+          security delete-keychain "${TEMP_KEYCHAIN_PATH}" || true        
