@@ -72,13 +72,13 @@ module.exports = {
         format: 'ULFO'
       }
     },
-    {
+   /* {
       name: '@electron-forge/maker-pkg',
       config: {
       icon: './icons/icon.icns',
-      //keychain: 'my-secret-ci-keychain'
+      keychain: 'my-secret-ci-keychain'
       }
-    },
+    },*/
   ],
   plugins: [
     {
