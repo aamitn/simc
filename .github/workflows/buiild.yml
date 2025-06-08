@@ -65,7 +65,9 @@ jobs:
         with:
           node-version: 'lts/*' # Installs the latest LTS Node.js version
           cache: 'npm' # Cache npm dependencies for faster installs
-          cache-dependency-path: '${{ env.ASTRO_SOURCE }}/package-lock.json' # Astro package-lock.json file
+          cache-dependency-path: |
+            ${{ env.ASTRO_SOURCE }}/package-lock.json
+            app/package-lock.json
 
 
       # Step 4: Setup GitHub Pages environment
@@ -82,7 +84,7 @@ jobs:
       # Step 6: Install Astro Node.js dependencies and build the site-source project (Astro build)
       # Assumes your Node.js project (with package.json) is in a directory named 'site-source'
       # within the root of your repository.
-      - name: Install Node.js dependencies and build Astro site
+      - name: ASTRO:Install Node.js dependencies and build Astro site
         run: |
           echo "Installing npm dependencies in ${{ env.ASTRO_SOURCE }}"
           npm ci
@@ -122,7 +124,7 @@ jobs:
       # Step 10: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory
       # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
-      - name: Install Node.js dependencies and publish 'app'
+      - name: ELECTRTON:Install Node.js dependencies and publish Elctron 'app'
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci # Use 'ci' for clean installs in CI environments
