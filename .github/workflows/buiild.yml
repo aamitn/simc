@@ -65,8 +65,7 @@ jobs:
         with:
           node-version: 'lts/*' # Installs the latest LTS Node.js version
           cache: 'npm' # Cache npm dependencies for faster installs
-          cache-dependency-path: |
-            ${{ env.ASTRO_SOURCE }}/package-lock.json # Astro package-lock.json file
+          cache-dependency-path: '**/package-lock.json' # Astro package-lock.json file
 
 
       # Step 4: Setup GitHub Pages environment
