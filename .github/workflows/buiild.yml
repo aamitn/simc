@@ -246,28 +246,30 @@ jobs:
         env:
           P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }} 
           P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
-          TEMP_KEYCHAIN_NAME: github-actions-temp-keychain
-          # FIX: Correctly construct TEMP_KEYCHAIN_PATH using TEMP_KEYCHAIN_NAME
-          # Using github.home makes it explicit; ~ also works.
-          TEMP_KEYCHAIN_PATH: ${{ github.home }}/Library/Keychains/${{ env.TEMP_KEYCHAIN_NAME }}.keychain
+          TEMP_KEYCHAIN_NAME: github-actions-temp-keychain # Keep the name here
         run: |
+          # Define TEMP_KEYCHAIN_PATH using shell expansion directly in the run block.
+          # $HOME is guaranteed to resolve to the runner's home directory.
+          export TEMP_KEYCHAIN_PATH="$HOME/Library/Keychains/${{ env.TEMP_KEYCHAIN_NAME }}.keychain"
+
           echo "Resolved TEMP_KEYCHAIN_NAME: ${{ env.TEMP_KEYCHAIN_NAME }}"
-          echo "Resolved TEMP_KEYCHAIN_PATH: ${{ env.TEMP_KEYCHAIN_PATH }}"
+          echo "Resolved TEMP_KEYCHAIN_PATH: ${TEMP_KEYCHAIN_PATH}" # Use shell variable here for echo
           
-          echo "Creating new temporary keychain: ${{ env.TEMP_KEYCHAIN_PATH }}"
-          security create-keychain -p "$P12_PASSWORD" "${{ env.TEMP_KEYCHAIN_PATH }}"
-          security unlock-keychain -p "$P12_PASSWORD" "${{ env.TEMP_KEYCHAIN_PATH }}"
-          security set-keychain-settings -t 3600 -l "${{ env.TEMP_KEYCHAIN_PATH }}"
+          # Ensure the directory exists before trying to create the keychain
+          mkdir -p "$HOME/Library/Keychains/"
+
+          echo "Creating new temporary keychain: ${TEMP_KEYCHAIN_PATH}"
+          security create-keychain -p "$P12_PASSWORD" "${TEMP_KEYCHAIN_PATH}"
+          security unlock-keychain -p "$P12_PASSWORD" "${TEMP_KEYCHAIN_PATH}"
+          security set-keychain-settings -t 3600 -l "${TEMP_KEYCHAIN_PATH}"
 
           echo "Setting temporary keychain as default and adding to search list"
-          # Set this new keychain as the default keychain. This is usually sufficient.
-          security default-keychain -s "${{ env.TEMP_KEYCHAIN_PATH }}"
-          # Optional: Add to search list. The default keychain command often handles search implicitly.
-          security list-keychains -s "${{ env.TEMP_KEYCHAIN_PATH }}" 
+          security default-keychain -s "${TEMP_KEYCHAIN_PATH}"
+          security list-keychains -s "${TEMP_KEYCHAIN_PATH}"
 
           echo "Decoding Base64 P12 and importing certificate into keychain"
           echo "$P12_BASE64" | base64 --decode > cert.p12
-          security import cert.p12 -k "${{ env.TEMP_KEYCHAIN_PATH }}" -P "$P12_PASSWORD" \
+          security import cert.p12 -k "${TEMP_KEYCHAIN_PATH}" -P "$P12_PASSWORD" \
             -T /usr/bin/codesign \
             -T /usr/bin/security \
             -T /usr/bin/productbuild \
@@ -277,10 +279,11 @@ jobs:
 
           echo "Verifying identities in keychain (for debugging purposes):"
           # This should now show your imported identity if the cert is valid for codesigning
-          security find-identity -p codesigning "${{ env.TEMP_KEYCHAIN_PATH }}" || true 
+          security find-identity -p codesigning "${TEMP_KEYCHAIN_PATH}" || true 
 
           # Export the temporary keychain name and path for subsequent steps
-          echo "TEMP_KEYCHAIN_PATH=${{ env.TEMP_KEYCHAIN_PATH }}" >> "$GITHUB_ENV"
+          # Exporting to GITHUB_ENV makes it available to subsequent steps in the same job
+          echo "TEMP_KEYCHAIN_PATH=${TEMP_KEYCHAIN_PATH}" >> "$GITHUB_ENV"
           echo "TEMP_KEYCHAIN_NAME=${{ env.TEMP_KEYCHAIN_NAME }}" >> "$GITHUB_ENV"
 
       # Step 5: Install Electron Node.js dependencies
@@ -295,14 +298,14 @@ jobs:
         working-directory: './${{ env.ELECTRON_SOURCE }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Use the full path for CSC_KEYCHAIN for robustness, as the keychain is defined by its path
+          # Now use the variable set in GITHUB_ENV from the previous step
           CSC_KEYCHAIN: ${{ env.TEMP_KEYCHAIN_PATH }}
           CSC_P12_PASSWORD: ${{ secrets.MACOS_CERT_P12_PASSWORD }}
           CSC_IDENTITY_AUTO_DISCOVERY: false 
           # IMPORTANT: If 'security find-identity' still doesn't find your identity,
           # or if the error persists, you might need to explicitly name the identity.
-          # The name should match the "Common Name" (CN) you used when creating the self-signed cert,
-          # e.g., "My Self-Signed Electron Dev". Get this exact name from 'security find-identity' output.
+          # The name should match the "Common Name" (CN) you used when creating the self-signed cert.
+          # Get this exact name from 'security find-identity' output once it's successfully listed.
           # CSC_NAME: "Your Self-Signed Electron Dev" 
           # CSC_INSTALLER_NAME: "Your Self-Signed Electron Dev" 
         run: |
