@@ -9,6 +9,14 @@ For a hosted version of the application see:
 * Bitmutex: [https://www.app.bitmutex.com/simc/](https://www.app.bitmutex.com/simc/)
 * GH Pages: [https://www.aamitn.github.io/simc/](https://www.aamitn.github.io/simc/)
 
+## Release Matrix
+| **Windows(winget,exe,msi)** | **Linux(Rpm,Deb)**  | **MacOS (dmg,pkg)**   |
+|-----------------------------------------------------------------|---------------------------------------------------------------------|-----------------------------------------------------------------|
+| [SimC-x.x.x-Setup.exe](https://github.com/aamitn/simc/releases) | [SimC-x.x.x-1.x86_64.rpm](https://github.com/aamitn/simc/releases)  | [SimC-x.x.x-arm64.exe](https://github.com/aamitn/simc/releases) |
+| [SimC-x.x.x-Setup.msi](https://github.com/aamitn/simc/releases) | [simc_x.x.x_amd64.deb](https://github.com/aamitn/simc/releases)     | [SimC-x.x.x-arm64.pkg](https://github.com/aamitn/simc/releases) |
+| **`winget install simc`**    |   |   |
+
+
 ## Local Build Script
 
 | **Option/Switch**  | **Description**                                                                         | **Example Usage**        |
