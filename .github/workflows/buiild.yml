@@ -130,13 +130,10 @@ jobs:
           path: ${{ env.BUILD_OUTPUT }}
 
 
-  # Electron build on all OS
-  build-electron:
+  # Electron build on all Ubuntu
+  build-electron-ubuntu:
     needs: build-and-deploy
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout repository
@@ -157,23 +154,52 @@ jobs:
           cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      - name: Set GITHUB_TOKEN on Linux/macOS
-        if: runner.os != 'Windows'
-        run: export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set GITHUB_TOKEN on Windows
-        if: runner.os == 'Windows'
+      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # This step assumes there's a Node.js project in the 'app' directory
+      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
+      - name: ELECTRTON-Install Node.js dependencies and publish Electron 'app'
         run: |
-          echo "Setting env in PowerShell..."
-          $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          echo "Installing npm dependencies in 'app' directory..."
+          npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          echo "Running 'npm run publish' in 'app' directory..."
+          npm run publish
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
+
+  # Electron build on all Windows
+  build-electron-windows:
+    needs: build-and-deploy
+    runs-on: windows-latest
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Download shared artifacts
+      - name: Download shared build output (Astro + Gradle)
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+          path: ${{ env.BUILD_OUTPUT }}
+
+      # Step 3: setup node     
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
       # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory
       # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
-      - name: ELECTRTON-Install Node.js dependencies and publish Elctron 'app'
+      - name: ELECTRTON-Install Node.js dependencies and publish Electron 'app'
         run: |
           echo "Installing npm dependencies in 'app' directory..."
           npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token in powershell..."
+          $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           echo "Running 'npm run publish' in 'app' directory..."
           npm run publish
-        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder        
