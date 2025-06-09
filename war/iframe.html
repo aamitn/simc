@@ -199,20 +199,20 @@
         console.log('Is Electron:', window.electronAPI?.isElectron);
         
         // Check if running in Electron with additional logging
-        if (window.electronAPI || window.electronAPI.isElectron) {
+        /*if (window.electronAPI.isElectron) {
             console.log('Running in Electron mode - hiding home button');
             // Hide home button in Electron mode
             if (homeLink) {
                 homeLink.style.display = 'none';
             }
-        } else {
+        } else { */
             console.log('Running in web browser mode - keeping home button');
             // Web browser mode: keep normal navigation
             if (homeLink) {
                 homeLink.addEventListener('click', function() {
                     window.parent.location.href = './';
                 });
-            }
+        //    }
         }
     });
 </script>

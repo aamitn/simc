@@ -1,11 +1,11 @@
 //=====================================================================
-//  Author:     E:V:A
-//  Date:       2019-03-14
+//  Author:     Bitmutex Technologies
+//  Date:       2025-03-14
 //  License:    GPLv3
 //  URL:        https: https://github.com/E3V3A/circuitjs1
 //
 //  Description:
-//      A build.gradle for the circuitjs1 project that was converted 
+//      A build.gradle for the simc project that was converted 
 //      into a Gradle build from Maven and Eclipse+GWT based builds.
 //=====================================================================
 
@@ -35,6 +35,13 @@ plugins {
     //id 'eclipse'                                  // 
     //id 'war'                                      // 
 }
+
+ gradleEnterprise {
+	 buildScan {
+		 termsOfServiceUrl = "https://gradle.com/terms-of-service"
+		 termsOfServiceAgree = "yes"
+	 }
+ }
 
 // https://docs.gradle.org/current/userguide/repository_types.html
 repositories {
