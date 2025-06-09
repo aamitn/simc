@@ -63,17 +63,17 @@
     </div>
     
     <!-- Oscilloscope Waveform -->
-    <div class="absolute top-10 right-10 w-32 h-20 border border-circuit-blue/30 rounded bg-dark-bg/50" id="oscilloscope">
+    <div class="absolute top-20 right-20 w-64 h-40 border-2 border-circuit-blue/50 rounded-lg bg-dark-bg/80 shadow-lg shadow-circuit-blue/20" id="oscilloscope">
       <svg class="w-full h-full" viewBox="0 0 128 80">
         <path d="M 0,40 Q 16,20 32,40 T 64,40 T 96,40 T 128,40" 
               stroke="#00D9FF" 
-              stroke-width="2" 
+              stroke-width="3" 
               fill="none" 
               class="waveform" 
               id="sine-wave"/>
-        <circle cx="10" cy="40" r="2" fill="#00FF94" class="signal-dot" id="signal-1"/>
-        <circle cx="32" cy="40" r="2" fill="#8B5FBF" class="signal-dot" id="signal-2"/>
-        <circle cx="64" cy="40" r="2" fill="#00D9FF" class="signal-dot" id="signal-3"/>
+        <circle cx="10" cy="40" r="3" fill="#00FF94" class="signal-dot" id="signal-1"/>
+        <circle cx="32" cy="40" r="3" fill="#8B5FBF" class="signal-dot" id="signal-2"/>
+        <circle cx="64" cy="40" r="3" fill="#00D9FF" class="signal-dot" id="signal-3"/>
       </svg>
     </div>
     
@@ -128,21 +128,80 @@
         </button>
       </div>
       
-      <!-- Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto" id="hero-stats">
-        <div class="stat-item">
-          <div class="text-3xl font-bold text-circuit-blue mb-2" data-count="10000">0</div>
-          <div class="text-text-secondary dark:text-text-secondary text-text-secondary-light">Active Users</div>
+    <!-- Interactive Metrics Display -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto" id="hero-metrics">
+      <!-- Frequency Monitor -->
+    <div class="metric-card p-6 rounded-lg backdrop-blur-sm
+                dark:bg-dark-bg/30 bg-white/30 
+                dark:border-circuit-blue/30 border-circuit-blue/20 
+                border shadow-lg 
+                dark:shadow-circuit-blue/10 shadow-circuit-blue/5
+                transition-all duration-300">
+        <div class="relative h-24">
+          <svg class="w-full h-full" viewBox="0 0 100 50">
+            <path class="frequency-wave" 
+                  d="M 0,25 Q 12.5,10 25,25 T 50,25 T 75,25 T 100,25" 
+                  stroke="#00D9FF" 
+                  stroke-width="2" 
+                  fill="none"/>
+          </svg>
+          <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            <span class="text-2xl font-mono text-circuit-blue">1.5 MHz</span>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="text-3xl font-bold text-circuit-purple mb-2" data-count="500">0</div>
-          <div class="text-text-secondary dark:text-text-secondary text-text-secondary-light">Components</div>
-        </div>
-        <div class="stat-item">
-          <div class="text-3xl font-bold text-circuit-green mb-2" data-count="1000000">0</div>
-          <div class="text-text-secondary dark:text-text-secondary text-text-secondary-light">Simulations Run</div>
-        </div>
+        <div class="text-center mt-4 text-text-secondary">Clock Speed</div>
       </div>
+
+      <!-- Power Usage -->
+    <div class="metric-card p-6 rounded-lg backdrop-blur-sm
+                dark:bg-dark-bg/30 bg-white/30 
+                dark:border-circuit-blue/30 border-circuit-blue/20 
+                border shadow-lg 
+                dark:shadow-circuit-blue/10 shadow-circuit-blue/5
+                transition-all duration-300">
+        <div class="relative h-24">
+          <div class="power-meter flex items-end justify-around h-full pb-2">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div class="power-bar w-2 bg-circuit-purple/30 rounded-t"
+                  style={`height: ${Math.random() * 100}%`}></div>
+            ))}
+          </div>
+          <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            <span class="text-2xl font-mono text-circuit-purple">2.4 W</span>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-text-secondary">Power Usage</div>
+      </div>
+
+      <!-- Temperature Monitor -->
+    <div class="metric-card p-6 rounded-lg backdrop-blur-sm
+                dark:bg-dark-bg/30 bg-white/30 
+                dark:border-circuit-blue/30 border-circuit-blue/20 
+                border shadow-lg 
+                dark:shadow-circuit-blue/10 shadow-circuit-blue/5
+                transition-all duration-300">
+        <div class="relative h-24">
+          <svg class="w-full h-full" viewBox="0 0 100 50">
+            <circle class="temp-ring" 
+                    cx="50" cy="25" r="20" 
+                    stroke="#00FF94" 
+                    stroke-width="4" 
+                    stroke-dasharray="125.6" 
+                    stroke-dashoffset="31.4" 
+                    fill="none"/>
+            <text x="50" y="25" 
+                  text-anchor="middle" 
+                  dominant-baseline="middle" 
+                  fill="#00FF94" 
+                  class="text-lg font-mono">
+              27°C
+            </text>
+          </svg>
+        </div>
+        <div class="text-center mt-4 text-text-secondary">Core Temp</div>
+      </div>
+    </div>
+
     </div>
   </div>
   
@@ -161,7 +220,7 @@
   });
 
   document.getElementById('download-btn')?.addEventListener('click', () => {
-    window.location.href = './release';
+    window.location.href = './#downloads';
   });
 
   // Counter animation for stats
@@ -197,3 +256,341 @@
     observer.observe(heroSection);
   }
 </script>
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Button handlers
+  document.getElementById('launch-btn')?.addEventListener('click', () => {
+    window.location.href = './circuitjs.html';
+  });
+
+  document.getElementById('download-btn')?.addEventListener('click', () => {
+    window.location.href = './#downloads';
+  });
+
+  // Animate stats with GSAP instead of custom counter
+  const animateStats = () => {
+    document.querySelectorAll('[data-count]').forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-count') || '0');
+      gsap.from(counter, {
+        textContent: 0,
+        duration: 2,
+        ease: "power1.inOut",
+        snap: { textContent: 1 },
+        stagger: {
+          each: 0.2
+        },
+        scrollTrigger: {
+          trigger: counter,
+          start: "top 80%"
+        }
+      });
+    });
+  };
+
+  // Animate circuit elements
+  const animateCircuit = () => {
+    // Animate current indicators
+    gsap.to('.current-indicator', {
+      x: "300%",
+      duration: 2,
+      ease: "none",
+      repeat: -1,
+      stagger: {
+        each: 0.5,
+        from: "start"
+      }
+    });
+
+    // Pulse effect for circuit components
+    gsap.to(['.resistor', '.capacitor', '.transistor'], {
+      scale: 1.1,
+      duration: 1,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+      stagger: {
+        each: 0.3
+      }
+    });
+
+    // Animate circuit lines
+    gsap.to('.circuit-line', {
+      opacity: 0.6,
+      duration: 1,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+      stagger: {
+        each: 0.1
+      }
+    });
+  };
+
+  const animateOscilloscope = () => {
+  // Animate the sine wave
+  gsap.to('#sine-wave', {
+    attr: {
+      d: 'M 0,40 Q 16,60 32,20 T 64,60 T 96,20 T 128,40'
+    },
+    duration: 2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+
+  // Animate the signal dots
+  gsap.to('.signal-dot', {
+    cy: gsap.utils.wrap([35, 45]),
+    duration: 1,
+    repeat: -1,
+    yoyo: true,
+    stagger: {
+      each: 0.3,
+      from: 'start'
+    },
+    ease: 'sine.inOut'
+  });
+
+  // Pulse effect for dots
+  gsap.to('.signal-dot', {
+    attr: { r: 3 },
+    opacity: 0.7,
+    duration: 0.8,
+    repeat: -1,
+    yoyo: true,
+    stagger: {
+      each: 0.2
+    }
+  });
+
+  // Add oscilloscope glow effect
+  gsap.to('#oscilloscope', {
+    boxShadow: '0 0 10px rgba(0, 217, 255, 0.3)',
+    duration: 2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+};
+
+// Add noise effect to make it more realistic
+const addNoiseEffect = () => {
+  const noise = () => {
+    const wave = document.getElementById('sine-wave');
+    if (!wave) return;
+    
+    const noiseAmount = 2;
+    const baseY = 40;
+    const points = Array.from({length: 5}, (_, i) => {
+      const x = i * 32;
+      const y = baseY + (Math.random() - 0.5) * noiseAmount;
+      return i === 0 ? `M 0,${y}` : `T ${x},${y}`;
+    }).join(' ');
+    
+    wave.setAttribute('d', points);
+    requestAnimationFrame(noise);
+  };
+  
+  noise();
+};
+
+const animateVoltages = () => {
+  // Base voltages
+  const voltages = {
+    v1: { base: 5.0, variation: 0.2 },
+    v2: { base: 3.3, variation: 0.15 },
+    v3: { base: 1.8, variation: 0.1 }
+  };
+
+  // Create random voltage fluctuations
+  const updateVoltage = (id: string, baseVoltage: number, variation: number) => {
+    const voltage = baseVoltage + (Math.random() - 0.5) * variation;
+    const element = document.getElementById(id);
+    if (element) {
+      // Add color intensity based on voltage variation
+      const normalizedVariation = Math.abs((voltage - baseVoltage) / variation);
+      const opacity = 0.3 + normalizedVariation * 0.7;
+      
+      gsap.to(element, {
+        innerHTML: `${voltage.toFixed(2)}V`,
+        duration: 0.5,
+        ease: "power1.out",
+        onComplete: () => {
+          // Add glitch effect when voltage spikes
+          if (Math.random() > 0.9) {
+            gsap.to(element, {
+              skewX: 20,
+              duration: 0.1,
+              yoyo: true,
+              repeat: 1,
+              ease: "power1.inOut"
+            });
+          }
+        }
+      });
+
+      // Animate the indicator dot
+      const dot = element.previousElementSibling;
+      if (dot) {
+        gsap.to(dot, {
+          scale: 1 + normalizedVariation,
+          opacity: opacity,
+          duration: 0.5,
+          ease: "power1.out"
+        });
+      }
+    }
+  };
+
+  // Create a timeline for coordinated animations
+  const tl = gsap.timeline({
+    repeat: -1,
+    onRepeat: () => {
+      // Occasionally add a voltage surge
+      if (Math.random() > 0.95) {
+        const surgeVoltage = voltages.v1.base * 1.5;
+        gsap.to("#voltage-1", {
+          innerHTML: `${surgeVoltage.toFixed(2)}V`,
+          color: "#FF0000",
+          duration: 0.2,
+          yoyo: true,
+          repeat: 1,
+          onComplete: () => {
+            gsap.to("#voltage-1", { color: "#00D9FF", duration: 0.5 });
+          }
+        });
+      }
+    }
+  });
+
+  // Update voltages periodically
+  const updateLoop = () => {
+    updateVoltage("voltage-1", voltages.v1.base, voltages.v1.variation);
+    updateVoltage("voltage-2", voltages.v2.base, voltages.v2.variation);
+    updateVoltage("voltage-3", voltages.v3.base, voltages.v3.variation);
+    
+    // Schedule next update
+    gsap.delayedCall(0.5 + Math.random() * 0.5, updateLoop);
+  };
+
+  // Start the animation
+  updateLoop();
+
+  // Add hover interaction
+  document.querySelectorAll('[id^="voltage-"]').forEach(element => {
+    element.addEventListener('mouseenter', () => {
+      gsap.to(element, {
+        scale: 1.2,
+        duration: 0.3,
+        ease: "back.out(1.7)"
+      });
+    });
+
+    element.addEventListener('mouseleave', () => {
+      gsap.to(element, {
+        scale: 1,
+        duration: 0.3,
+        ease: "back.out(1.7)"
+      });
+    });
+  });
+};
+const updatePowerBars = () => {
+  const bars = document.querySelectorAll('.power-bar');
+  bars.forEach(bar => {
+    gsap.to(bar, {
+      height: `${30 + Math.random() * 70}%`,
+      duration: 1,
+      ease: 'power1.inOut'
+    });
+  });
+};
+
+const animateMetrics = () => {
+  // Animate frequency wave
+  gsap.to('.frequency-wave', {
+    attr: { d: 'M 0,25 Q 12.5,40 25,25 T 50,25 T 75,25 T 100,25' },
+    duration: 1,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+
+  // Update power bars periodically
+  setInterval(updatePowerBars, 2000);
+
+  // Animate temperature ring
+  gsap.to('.temp-ring', {
+    strokeDashoffset: '-125.6',
+    duration: 4,
+    repeat: -1,
+    ease: 'none'
+  });
+};
+
+  // Initialize animations
+  window.addEventListener('load', () => {
+    animateStats();
+    animateCircuit();
+    animateOscilloscope();
+    addNoiseEffect();
+    animateVoltages();
+    animateMetrics();
+  });
+</script>
+
+<style>
+  #oscilloscope {
+    backdrop-filter: blur(4px);
+    transform: scale(1);
+    transition: transform 0.3s ease;
+  }
+
+  #oscilloscope:hover {
+    transform: scale(1.05);
+  }
+
+  .waveform {
+    filter: drop-shadow(0 0 4px rgba(0, 217, 255, 0.7));
+  }
+
+  .signal-dot {
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+
+  .metric-card {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px -5px rgba(0, 217, 255, 0.2);
+}
+
+.power-bar {
+  transition: height 0.5s ease;
+}
+
+.frequency-wave {
+  animation: waveFlow 2s linear infinite;
+}
+
+.temp-ring {
+  transform-origin: center;
+  animation: ringRotate 4s linear infinite;
+}
+
+@keyframes waveFlow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>

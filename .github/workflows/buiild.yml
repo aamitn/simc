@@ -83,6 +83,8 @@ jobs:
       # Assumes  Node.js project (with package.json) is in a directory named 'site-source'
       # within the root of  repository.
       - name: ASTRO-Install Node.js dependencies and build Astro site
+        env:
+          GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
         run: |
           echo "Installing npm dependencies in ${{ env.ASTRO_SOURCE }}"
           npm ci
@@ -201,9 +203,22 @@ jobs:
           cache: 'npm' # Cache npm dependencies for faster installs
           cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
 
-      # Step 4: Checkout the repository code
+      # Step 4: Setup Windows 10 SDK - Required for Appx packaging
       - name: Setup Windows 10 SDK
         uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
+
+      # Step 4: Setup Wix Toolset - Required for MSI packaging
+      - name: Install WiX Toolset via winget
+        run: |
+          winget install --id WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements
+      - name: Add WiX Toolset to PATH (with wildcard support)
+        shell: powershell
+        run: |
+          $basePath = "C:\Program Files (x86)\WiX Toolset*"
+          $wixDir = Get-ChildItem "$basePath" -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          $wixBin = Join-Path $wixDir.FullName "bin"
+          Write-Host "Detected WiX bin path: $wixBin"
+          echo "$wixBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       # Step 5: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory

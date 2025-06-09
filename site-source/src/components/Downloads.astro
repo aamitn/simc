@@ -1,0 +1,263 @@
+---
+import { getLatestRelease, categorizeDownloads, formatVersion, formatDate } from '../utils/github';
+import MyIcon from './MyIcon.jsx';
+const owner = 'aamitn';
+const repo = 'simc';
+
+const release = await getLatestRelease(owner, repo);
+const downloads = release ? categorizeDownloads(release.assets) : null;
+const version = release ? formatVersion(release.tag_name) : 'Unknown';
+const releaseDate = release ? formatDate(release.published_at) : 'Unknown';
+// Icon mapping helper
+const getPackageIcon = (type) => {
+  if (type.includes('RPM')) return { set: 'si', name: 'SiRedhat' };
+  if (type.includes('DEB')) return { set: 'si', name: 'SiDebian' };
+  if (type.includes('Setup')) return { set: 'fa', name: 'FaWindows' };
+  if (type.includes('MSI')) return { set: 'md', name: 'MdOutlineInstallDesktop' };
+  if (type.includes('DMG')) return { set: 'si', name: 'SiApple' };
+  if (type.includes('NuGet')) return { set: 'si', name: 'SiNuget' };
+  if (type.includes('ZIP')) return { set: 'fa', name: 'FaFileArchive' };
+  if (type.includes('Appx')) return { set: 'lu', name: 'LuPackageOpen' };
+    
+  return { set: 'fa', name: 'FaFile' };
+};
+---
+
+
+<section id="downloads" class="py-16 bg-gray-50 dark:bg-gray-900">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto downloads-content opacity-0">
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="text-center mb-16" id="features-header">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          <span class="bg-gradient-to-r from-circuit-blue to-circuit-purple bg-clip-text text-transparent">
+            Download SimC
+          </span>
+        </h2>
+        <p class="text-xl text-text-secondary dark:text-text-secondary text-text-secondary-light max-w-2xl mx-auto">
+        Version {version} - Released {releaseDate}
+        </p>
+      </div>
+
+      {!downloads && (
+        <div class="text-center text-red-500">
+          Unable to fetch download information. Please try again later. Possible Rate Limit Exceeded.
+        </div>
+      )}
+
+   {downloads && (
+        <div class="grid md:grid-cols-3 gap-8">
+          
+          <!-- Windows Downloads -->
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <MyIcon set="fa" name="FaWindows" size={24} className="text-blue-500 mr-2" client:load />
+              <h3 class="text-xl font-semibold">Windows</h3>
+            </div>
+            <ul class="space-y-3">
+              {downloads.windows.map(download => {
+                const icon = getPackageIcon(download.type);
+                const isRecommended = download.type.includes('Setup') || download.type.includes('MSI');
+                return (
+                  <li>
+                    <a href={download.url}
+                      class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                      <div class="flex items-center">
+                        <MyIcon {...icon} size={20} className="mr-3 text-gray-500" client:load />
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <span class="font-medium">{download.type}</span>
+                            {isRecommended && (
+                              <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full">
+                                Recommended
+                              </span>
+                            )}
+                          </div>
+                          <div class="text-sm text-gray-500 dark:text-gray-400">{download.size}</div>
+                        </div>
+                      </div>
+                      <MyIcon set="bi" name="BiDownload" size={20} className="text-circuit-blue" client:load />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <!-- Linux Downloads -->
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <MyIcon set="fa" name="FaLinux" size={24} className="text-green-500 mr-2" client:load />
+              <h3 class="text-xl font-semibold">Linux</h3>
+            </div>
+            <ul class="space-y-3">
+              {downloads.linux.map(download => {
+                const icon = getPackageIcon(download.type);
+                return (
+                  <li>
+                    <a href={download.url}
+                       class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                      <div class="flex items-center">
+                        <MyIcon {...icon} size={20} className="mr-3 text-gray-500" client:load />
+                        <div>
+                          <div class="font-medium">{download.type}</div>
+                          <div class="text-sm text-gray-500 dark:text-gray-400">{download.size}</div>
+                        </div>
+                      </div>
+                      <MyIcon set="bi" name="BiDownload" size={20} className="text-circuit-blue" client:load />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <!-- macOS Downloads -->
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div class="flex items-center mb-4">
+              <MyIcon set="fa" name="FaApple" size={24} className="text-gray-500 mr-2" client:load />
+              <h3 class="text-xl font-semibold">macOS</h3>
+            </div>
+            <ul class="space-y-3">
+              {downloads.mac.map(download => {
+                const icon = getPackageIcon(download.type);
+                return (
+                  <li>
+                    <a href={download.url}
+                       class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                      <div class="flex items-center">
+                        <MyIcon {...icon} size={20} className="mr-3 text-gray-500" client:load />
+                        <div>
+                          <div class="font-medium">{download.type}</div>
+                          <div class="text-sm text-gray-500 dark:text-gray-400">{download.size}</div>
+                        </div>
+                      </div>
+                      <MyIcon set="bi" name="BiDownload" size={20} className="text-circuit-blue" client:load />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      )}
+          </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Main content reveal animation
+  gsap.to('.downloads-content', {
+    opacity: 1,
+    y: 0,
+    duration: 1,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '#downloads',
+      start: 'top 80%'
+    }
+  });
+
+  // Animate download cards
+  gsap.from('.bg-white', {
+    opacity: 0,
+    y: 50,
+    duration: 0.8,
+    stagger: 0.2,
+    ease: 'back.out(1.2)',
+    scrollTrigger: {
+      trigger: '#downloads',
+      start: 'top 70%'
+    }
+  });
+
+  // Hover animations for download items
+  const downloadItems = document.querySelectorAll('.space-y-3 a');
+  
+  downloadItems.forEach(item => {
+    const icon = item.querySelector('.text-circuit-blue');
+    const tl = gsap.timeline({ paused: true });
+    
+    tl.to(item, {
+      scale: 1.02,
+      duration: 0.3,
+      ease: 'power2.out'
+    })
+    .to(icon, {
+      rotate: 360,
+      scale: 1.2,
+      duration: 0.4,
+      ease: 'back.out(1.7)'
+    }, 0);
+
+    item.addEventListener('mouseenter', () => tl.play());
+    item.addEventListener('mouseleave', () => tl.reverse());
+  });
+
+  // Animate recommended badges
+  gsap.from('.rounded-full', {
+    scale: 0,
+    opacity: 0,
+    duration: 0.6,
+    stagger: 0.1,
+    ease: 'back.out(1.7)',
+    scrollTrigger: {
+      trigger: '#downloads',
+      start: 'top 70%'
+    }
+  });
+
+  // Stats counter animation (if you have stats)
+  const animateValue = (element, start, end, duration) => {
+    const range = end - start;
+    const startTime = performance.now();
+    
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      element.textContent = Math.floor(start + (progress * range)).toLocaleString();
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+    
+    requestAnimationFrame(update);
+  };
+
+  // Add initial styles
+  gsap.set('.downloads-content', { opacity: 0, y: 50 });
+  gsap.set('.bg-white', { opacity: 0, y: 50 });
+  gsap.set('.rounded-full', { scale: 0, opacity: 0 });
+</script>
+
+<style>
+  .downloads-content {
+    transform: translateY(50px);
+  }
+
+  /* Optional: Add smooth transitions for dark mode */
+  .bg-white {
+    transition: background-color 0.3s ease;
+  }
+
+  /* Optimize animations for reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .downloads-content {
+      transform: none;
+    }
+    
+    .bg-white {
+      transition: none;
+    }
+  }
+</style>

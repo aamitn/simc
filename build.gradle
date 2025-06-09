@@ -36,12 +36,13 @@ plugins {
     //id 'war'                                      // 
 }
 
- gradleEnterprise {
-	 buildScan {
-		 termsOfServiceUrl = "https://gradle.com/terms-of-service"
-		 termsOfServiceAgree = "yes"
-	 }
- }
+//Disable for local builds
+develocity {
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/terms-of-service"
+        termsOfUseAgree = "yes"
+    }
+}
 
 // https://docs.gradle.org/current/userguide/repository_types.html
 repositories {

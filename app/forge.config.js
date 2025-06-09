@@ -18,7 +18,7 @@ module.exports = {
         prerelease: false,
         tagPrefix: 'v',
         draft: false,
-       // authToken: 'process.env.GITHUB_TOKEN '// Use this only for custom tokens GitHub token for authentication Default [GITHUB_TOKEN] 
+     // authToken: 'process.env.GITHUB_TOKEN '// Use this only for custom tokens GitHub token for authentication other than Default [GITHUB_TOKEN] 
       }
     }
   ],
@@ -32,19 +32,19 @@ module.exports = {
         //certificatePassword: process.env.CERT_PASS
       },
     },
-   /* {
+    {
       name: '@electron-forge/maker-wix',
       config: {
         language: 1033,
-        manufacturer: 'Bitmutex Technologies',
+        manufacturer: 'Bitmutex Technologies'
       }
-    },*/
+    },
     {
       name: '@electron-forge/maker-appx',
       config: {
         publisher: 'CN=Bitmutex Technologies',
         devCert: './cert.pfx',
-        certPass: process.env.CERT_PASS_WIN, 
+        certPass: process.env.CERT_PASS_WIN
       }
     },
     {
