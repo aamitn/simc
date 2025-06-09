@@ -80,9 +80,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Step 6: Install Astro Node.js dependencies and build the site-source project (Astro build)
-      # Assumes  Node.js project (with package.json) is in a directory named 'site-source'
-      # within the root of  repository.
+      # Step 6: Install Astro Node.js dependencies and build the site-source project (Astro build) , then copy the build output to site dir.
       - name: ASTRO-Install Node.js dependencies and build Astro site
         env:
           GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
@@ -90,14 +88,17 @@ jobs:
           echo "Installing npm dependencies in ${{ env.ASTRO_SOURCE }}"
           npm ci
           echo "Building site-source project with Astro"
-          # Use npm to run astro command and pass GitHub Pages specific site and base paths
-          npm run build -- --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
+          # Use npx to run astro command and pass GitHub Pages specific site and base paths
+          npx --no-install astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.ASTRO_SOURCE }} # Sets the working directory for this step
+
+      - name: Run Astro post-build copy script
+        run: npm run copy
+        working-directory: ${{ env.ASTRO_SOURCE }}
 
       # Step 7: Run Gradle build tasks (Simc build)
       # Start build process with gradle
       # gradle build --dry-run (use this for dry run)
-
       - name: Build with Gradle
         run: |
           echo "Make gradle wrapper executable..." 
@@ -132,7 +133,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: [build]
+    needs: [build, electron-ubuntu, electron-macos, electron-windows]
     runs-on: ubuntu-latest
     name: Deploy
     steps:
