@@ -210,7 +210,8 @@ jobs:
       # Step 4: Setup Wix Toolset - Required for MSI packaging
       - name: Install WiX Toolset via winget
         run: |
-          winget install --id WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements
+          winget install --id WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements --silent
+
       - name: Add WiX Toolset to PATH (with wildcard support)
         shell: powershell
         run: |
