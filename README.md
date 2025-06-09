@@ -37,7 +37,7 @@
 The web application can be compiled and run locally using Eclipse, or in a cloud development container like Github Codespaces or gitpod.io. Both of these services provide a number of free usage hours every month. You can also use the cloud tools from `./dev.sh` on your local Linux machine or in a local docker container.
 
 ### Illustration
-![illustration](https://gitlab.com/aamitn/assets/-/raw/main/video/simc_video.gif)
+![illustration](./src/assets/simc_video.gif)
 
 ### Local Build
 
