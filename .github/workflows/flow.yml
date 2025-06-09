@@ -234,8 +234,8 @@ jobs:
         run: |
           $EncryptedFile = "cert.pfx.enc"
           $DecryptedFile = "cert.pfx"
-          $Password = "${{ secrets.CERT_ENCRYPTION_PASSWORD_WIN }}"
-          openssl aes-256-cbc -d -pbkdf2 -in $EncryptedFile -out $DecryptedFile -pass pass:$Password
+          $Password = '${{ secrets.CERT_ENCRYPTION_PASSWORD_WIN }}'
+          & openssl aes-256-cbc -d -pbkdf2 -in $EncryptedFile -out $DecryptedFile -pass pass:$Password
 
       # Step 8: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory
