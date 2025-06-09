@@ -208,9 +208,10 @@ jobs:
         uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
 
       # Step 4: Setup Wix Toolset - Required for MSI packaging
-      - name: Install WiX Toolset via winget
+      - name: Install WiX Toolset via Chocolatey (v3.14.0)
+        shell: powershell
         run: |
-          winget install --id WiXToolset.WiXToolset -e --accept-source-agreements --accept-package-agreements --disable-interactivity
+          choco install wixtoolset --version=3.14.0 -y --no-progress
 
       - name: Add WiX Toolset to PATH (with wildcard support)
         shell: powershell
