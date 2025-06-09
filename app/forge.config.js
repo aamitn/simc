@@ -23,7 +23,7 @@ module.exports = {
     }
   ],
   makers: [
-    {
+   {
       name: '@electron-forge/maker-squirrel',
       config: {
         iconUrl: 'https://gitlab.com/aamitn/assets/-/raw/main/ico/icon.ico', //TODO: An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
@@ -33,13 +33,20 @@ module.exports = {
       },
     },
    /* {
+      name: '@electron-forge/maker-wix',
+      config: {
+        language: 1033,
+        manufacturer: 'Bitmutex Technologies',
+      }
+    },*/
+    {
       name: '@electron-forge/maker-appx',
       config: {
-        publisher: 'CN=Bitmutex Trusted Root Certificate Authority',
+        publisher: 'CN=Bitmutex Technologies',
         devCert: './cert.pfx',
-        certPass: process.env.CERT_PASS
+        certPass: process.env.CERT_PASS_WIN, 
       }
-    }, */
+    },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin', 'win32', 'linux'],

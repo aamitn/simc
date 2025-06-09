@@ -43,7 +43,7 @@ function createWindow() {
 
   windows.push(mainWindow);
   
-  session.defaultSession.setPreloads([path.join(__dirname, 'preload.js')]);
+ // session.defaultSession.setPreloads([path.join(__dirname, 'preload.js')]);
 
   const htmlFilePath = path.join(app.getAppPath(), 'site', 'circuitjs.html');
 
