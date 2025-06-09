@@ -211,8 +211,8 @@ jobs:
       - name: Install WiX Toolset via Chocolatey (v3.14.0)
         shell: powershell
         run: |
-          if (-not (Get-Command heat.exe -ErrorAction SilentlyContinue)) {
-            choco install wixtoolset --version=3.14.0 -y --no-progress
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            choco install wixtoolset --version=3.14.0 -y --no-progress --allow-downgrade
           } else {
             Write-Host "WiX Toolset is already installed. Skipping installation."
           }
