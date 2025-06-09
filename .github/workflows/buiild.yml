@@ -181,7 +181,7 @@ jobs:
   # Electron build on  Windows
   electron-windows:
     needs: build
-    runs-on: windows-latest
+    runs-on: windows-2025 # change to windows-latest by end of 2025
     name: Electron Windows Publish (exe,msi,appx)
     steps:
       # Step 1: Checkout the repository code
