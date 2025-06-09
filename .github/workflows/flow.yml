@@ -1,5 +1,6 @@
-# Name of the workflow
-name: Build , Deploy to GitHub Pages and Publish Electron Binaries
+#This flow handles Build[astro-frontendmain gradle project, electron app] ,
+#Deploy [GitHub Pages] and Publish Electron Binaries 
+name: Build-Deploy-Publish 
 
 on:
   # Trigger the workflow on pushes to the 'main' branch
@@ -207,7 +208,7 @@ jobs:
       - name: Setup Windows 10 SDK
         uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
 
-      # Step 4: Setup Wix Toolset - Required for MSI packaging
+      # Step 5: Setup Wix Toolset - Required for MSI packaging
       - name: Install WiX Toolset via Chocolatey (v3.14.0)
         shell: powershell
         run: |
@@ -216,7 +217,7 @@ jobs:
           } else {
             Write-Host "WiX Toolset is already installed. Skipping installation."
           }
-
+      # Step 6: Add Wix Toolset  to PATH
       - name: Add WiX Toolset to PATH (with wildcard support)
         shell: powershell
         run: |
@@ -226,7 +227,17 @@ jobs:
           Write-Host "Detected WiX bin path: $wixBin"
           echo "$wixBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      # Step 5: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # Step 7: Decrypt code signing certificate
+      - name: Decrypt cert.pfx.enc
+        shell: powershell
+        working-directory: './${{ env.ELECTRON_SOURCE }}'
+        run: |
+          $EncryptedFile = "cert.pfx.enc"
+          $DecryptedFile = "cert.pfx"
+          $Password = "${{ secrets.CERT_ENCRYPTION_PASSWORD_WIN }}"
+          openssl aes-256-cbc -d -pbkdf2 -in $EncryptedFile -out $DecryptedFile -pass pass:$Password
+
+      # Step 8: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
       # This step assumes there's a Node.js project in the 'app' directory
       # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
       - name: ELECTRTON-Install Node.js dependencies and publish Electron 'app'

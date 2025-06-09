@@ -1,23 +1,29 @@
 # SimC : Circuit Simulation Software
-![SIM-C Logo](./war/banner.jpg)  
-## Introduction
+<img src="./war/logosymbol.png" alt="simc logo" align="left" width="75" height="auto" style="border-radius: 20%;" />
 
-SIM-C is an advanced circuit simulation software originally written in Java and later ported to run directly in a web browser using Google Web Toolkit (GWT). It allows users to simulate electronic circuits without requiring any installation—just click and run!
+[![Build-Deploy-Publish](https://github.com/aamitn/simc/actions/workflows/flow.yml/badge.svg)](https://github.com/aamitn/simc/actions/workflows/flow.yml) 
+ **`SimC™`** abbraviated as _`Simulation of Circuit`_ is an advanced circuit simulation software written in Java8 and ported to run directly in a web browser using Google Web Toolkit (GWT). It is targeted for students,teachers and researchers. Comes in Web App and Native Desktop App (for Windows, Linux and MacOs)
 
-For a hosted version of the application see:
+![SimC Banner](./war/banner.jpg)  
 
-* Bitmutex: [https://www.app.bitmutex.com/simc/](https://www.app.bitmutex.com/simc/)
+
+#### For a hosted version of the application see:
+
+* Bitmutex: [https://www.simc.bitmutex.com/](https://www.simc.bitmutex.com/)
 * GH Pages: [https://www.aamitn.github.io/simc/](https://www.aamitn.github.io/simc/)
 
-## Release Matrix
-| **Windows(winget,exe,msi)** | **Linux(Rpm,Deb)**  | **MacOS (dmg,pkg)**   |
-|-----------------------------------------------------------------|---------------------------------------------------------------------|-----------------------------------------------------------------|
-| [SimC-x.x.x-Setup.exe](https://github.com/aamitn/simc/releases) | [SimC-x.x.x-1.x86_64.rpm](https://github.com/aamitn/simc/releases)  | [SimC-x.x.x-arm64.exe](https://github.com/aamitn/simc/releases) |
-| [SimC-x.x.x-Setup.msi](https://github.com/aamitn/simc/releases) | [simc_x.x.x_amd64.deb](https://github.com/aamitn/simc/releases)     | [SimC-x.x.x-arm64.pkg](https://github.com/aamitn/simc/releases) |
-| **`winget install simc`**    |   |   |
+## [Release](https://github.com/aamitn/simc/releases/latest) Matrix
+| Windows(winget,exe,msi)   | Linux(Rpm,Deb)              | MacOS (dmg,pkg)          |
+|---------------------------|-----------------------------|--------------------------|
+| **SimC-x.x.x-Setup.exe**  | **SimC-x.x.x-1.x86_64.rpm** | **SimC-x.x.x-arm64.dmg** |
+| **SimC-x.x.x-Setup.msi**  | **simc_x.x.x_amd64.deb**    | **SimC-x.x.x-arm64.pkg** |
+| **Simc.appx**             |                             |                          |
+| **Simc.msi**              |                             |                          |
+| **`winget install simc`** |                             |                          |
 
 
-## Local Build Script
+
+## Build Script
 
 | **Option/Switch**  | **Description**                                                                         | **Example Usage**        |
 |--------------------|-----------------------------------------------------------------------------------------|--------------------------|
@@ -30,23 +36,14 @@ For a hosted version of the application see:
 
 The web application can be compiled and run locally using Eclipse, or in a cloud development container like Github Codespaces or gitpod.io. Both of these services provide a number of free usage hours every month. You can also use the cloud tools from `./dev.sh` on your local Linux machine or in a local docker container.
 
+### Illustration
+![illustration](https://gitlab.com/aamitn/assets/-/raw/main/video/simc_video.gif)
 
-### Local Development using Gradle 
+### Local Build
 
-To build the application using gradle, do the following:
+#### STEP 1:  Develop/Build the Landing Page (Astro) [Location: `site-source`]
 
-```bash
-# 1. Run Gradle build with verbose output:
-gradle compileGwt --console verbose --info
-# 2. Create the web-site directory from the build files:
-gradle makeSite --console verbose --info
-```
-
-Now, just open `site/circuitjs.html` with your browser and enjoy!
-
-#### Develop/Build the Landing Page (Astro) [Location: `site-source`]
-
-To build the astro application to ssg:
+To build the astro application :
 
 ```bash
 # 1. Run Gradle build with verbose output:
@@ -67,7 +64,23 @@ pnpm build
 OR
 npm run build
 ```
-This will create the `index.html` file , `_astro` directory and `circuit-bg.svg` file inside the `site` directory!
+This will create the `index.html` file , `_astro` directory and `circuit-bg.svg` file and some other files  inside the `site` directory!
+
+
+
+#### STEP 2:  Build Locally using Gradle 
+
+To build the application using gradle, do the following:
+
+```bash
+# 1. Run Gradle build with verbose output:
+gradle compileGwt --console verbose --info --scan
+# 2. Create the web-site directory from the build files:
+gradle makeSite --console verbose --info --scan
+```
+
+Now, just open `site/circuitjs.html` with your browser and enjoy!
+>NOTE: If build fails for scan related issues remove the `develocity{}` method from `build.gradle` and remove `--scan` switch and try again.
 
 You can do the same thing inside GitHub Codespaces.  Then after creating the site directory, you can create a web server using:
 
@@ -76,8 +89,9 @@ cd site
 python3 -m http.server 8080
 ```
 
-Then go to the Ports tab, hover over the "Forwarded Address" and click "Follow Link".  Then click `circuitjs.html` to view the application. Or goto `http://localhost:8080/circuitjs.html` OR goto `http://localhost:8080`
+>>Don't Juggle the sequence of STEP1->STEP2 as it will end up in un predictable builds as astro build cleans the build output directory on each new build.
 
+Head over `http://localhost:8080/circuitjs.html` OR goto `http://localhost:8080`
 
 ### Development using Eclipse
 
@@ -128,14 +142,14 @@ The link for the full-page version of the application is now:
 Just for reference the files should look like this
 
 ```
--+ Directory containing the front page (eg "circuitjs")
-  +- circuitjs.html - full page version of application
-  +- iframe.html - see notes above
-  +- shortrelay.php - see notes above
-  ++ circuitjs1 (directory)
-   +- various files built by GWT
-   +- circuits (directory, containing example circuits)
-   +- setuplist.txt (index in to example circuit directory)
+simc/site/                      # Root directory containing the application front-end
+├── circuitjs.html              # Full-page version of the application
+├── iframe.html                 # Minimal iframe-compatible version (see documentation)
+├── shortrelay.php              # Optional server-side helper script (see documentation)
+└── circuitjs1/                 # Main application files (compiled by GWT)
+    ├── circuits/              # Directory containing example circuit files
+    ├── setuplist.txt          # Index file referencing example circuits
+    └── [other GWT files]      # Various JavaScript/HTML/CSS files built by GWT
 ```
 
 ## Docker/podman containers
@@ -194,28 +208,33 @@ You can link to the full page version of the application using the link shown ab
 If you want to embed the application in another page then use an iframe with the src being the full-page version.
 
 You can add query parameters to link to change the applications startup behaviour. The following are supported:
-```
-.../circuitjs.html?cct=<string> // Load the circuit from the URL (like the # in the Java version)
-.../circuitjs.html?ctz=<string> // Load the circuit from compressed data in the URL
-.../circuitjs.html?startCircuit=<filename> // Loads the circuit named "filename" from the "Circuits" directory
-.../circuitjs.html?startCircuitLink=<URL> // Loads the circuit from the specified URL. CURRENTLY THE URL MUST BE A DROPBOX SHARED FILE OR ANOTHER URL THAT SUPPORTS CORS ACCESS FROM THE CLIENT
-.../circuitjs.html?euroResistors=true // Set to true to force "Euro" style resistors. If not specified the resistor style will be based on the user's browser's language preferences
-.../circuitjs.html?IECGates=true // Set to true to force IEC logic gates. If not specified the gate style will be based on the user's browser's language preferences
-.../circuitjs.html?usResistors=true // Set to true to force "US" style resistors. If not specified the resistor style will be based on the user's browser's language preferences
-.../circuitjs.html?whiteBackground=<true|false>
-.../circuitjs.html?conventionalCurrent=<true|false>
-.../circuitjs.html?running=<true|false> // Start the app without the simulation running, default true
-.../circuitjs.html?hideSidebar=<true|false> // Hide the sidebar, default false
-.../circuitjs.html?hideMenu=<true|false> // Hide the menu, default false
-.../circuitjs.html?editable=<true|false> // Allow circuit editing, default true
-.../circuitjs.html?positiveColor=%2300ff00 // change positive voltage color (rrggbb)
-.../circuitjs.html?negativeColor=%23ff0000 // change negative voltage color
-.../circuitjs.html?selectColor=%2300ffff // change selection color
-.../circuitjs.html?currentColor=%23ffff00 // change current color
-.../circuitjs.html?mouseWheelEdit=<true|false> // allow changing of values by mouse wheel
-.../circuitjs.html?mouseMode=<item> // set the initial mouse mode.  can also initially perform other UI actions, such as opening the 'about' menu, running 'importfromlocalfile', etc.
-.../circuitjs.html?hideInfoBox=<true|false>
-```
+
+**Example Query** : `.../circuitjs.html?<Query>=<Param-Value>` , `.../circuitjs.html?running=true`
+
+| Query Parameter                            | Description                                                                                                                     |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `?cct=<string>`                            | Load the circuit from the URL (like the `#` in the Java version)                                                                |
+| `?ctz=<string>`                            | Load the circuit from compressed data in the URL                                                                                |
+| `?startCircuit=<filename>`                | Loads the circuit named `filename` from the `Circuits` directory                                                                |
+| `?startCircuitLink=<URL>`                | Loads the circuit from a specified URL (must support CORS, e.g., Dropbox shared link)                                           |
+| `?euroResistors=true`                     | Force "Euro" style resistors (default based on browser language)                                                               |
+| `?IECGates=true`                          | Force IEC logic gates (default based on browser language)                                                                      |
+| `?usResistors=true`                       | Force "US" style resistors (default based on browser language)                                                                 |
+| `?whiteBackground=<true/false>`          | Toggle white background                                                                                                         |
+| `?conventionalCurrent=<true/false>`      | Toggle conventional current flow display                                                                                        |
+| `?running=<true/false>`                  | Start with simulation running (`true` by default)                                                                               |
+| `?hideSidebar=<true/false>`              | Hide the sidebar (`false` by default)                                                                                           |
+| `?hideMenu=<true/false>`                 | Hide the menu (`false` by default)                                                                                              |
+| `?editable=<true/false>`                 | Allow circuit editing (`true` by default)                                                                                       |
+| `?positiveColor=%2300ff00`               | Set positive voltage color (hex format: `rrggbb`, `%23` is `#`)                                                                |
+| `?negativeColor=%23ff0000`               | Set negative voltage color                                                                                                      |
+| `?selectColor=%2300ffff`                 | Set selection color                                                                                                             |
+| `?currentColor=%23ffff00`                | Set current flow color                                                                                                          |
+| `?mouseWheelEdit=<true/false>`          | Enable value changes via mouse wheel                                                                                           |
+| `?mouseMode=<item>`                      | Set initial mouse mode or trigger UI actions (e.g., `about`, `importfromlocalfile`)                                            |
+| `?hideInfoBox=<true/false>`             | Hide the info box                                                                                                               |
+
+
 The simulator can also interface with your javascript code.  See [war/jsinterface.html](http://www.falstad.com/circuit/jsinterface.html) for an example.
 
 ## Building an Electron application
@@ -224,29 +243,42 @@ The [Electron](https://electronjs.org/) project allows web applications to be di
 
 The general approach to building an Electron application for a particular platform is documented [here](https://electronjs.org/docs/tutorial/application-distribution). The following instructions apply this approach to circuit JS.
 
-To build the Electron application:
-* Compile the astro frontend in site-source and the main application using Gradle, as [above](#building-the-web-application).
-* Download and unpack a [pre-built Electron binary directory](https://github.com/electron/electron/releases) latest version for the target platform.
-* Copy the `app` directory from [this](https://github.com/aamint/simc) repository to the location specified [here](https://electronjs.org/docs/tutorial/application-distribution) in the Electron binary directory structure.
-  >Copy `app` to `electron/resources` (in Win/Linux) OR to `electron/Electron.app/Contents/Resources/` in MacOS
-* Copy the `site` directory, containing the compiled SimC application, in to the `app` directory of the Electron binary directory structure as mentioned above.
-* Run the "Electron" executable file. It should automatically load SimC.
+To build the Electron application loacted at **`app`** directory:
+* Compile the astro frontend in site-source and the main application using Gradle, as [above](#local-build).
+- **AUTO MOD:**
 
-Known limitations of the Electron application:
-* "Create short URL" on "Export as URL" doesn't work as it relies on server support.
+  * Install Dependencies
+    ```bash
+    cd app
+    npm install OR pnpm install
+    ```
+  * Start the application Locally
+    ```bash
+    npm start OR pnpm start
+    ```
+  * Package the binaries for Win/Linux/Mac
+    ```bash
+    npm make OR pnpm make
+    ```
+  * Publish the packaged binaries [This is meant for CI, for manual publish, make sure `GITHUB_TOKEN` is set in `app/forge.config.json` ]
+    ```bash
+    npm publish OR pnpm publish
+    ```
+- **MANUAL MODE:**
+  * [Download](https://github.com/electron/electron/releases) and unpack a pre-built Electron binary  for your target platform.
+  * Copy the `app` directory from [this](https://github.com/aamint/simc) repository to the location specified [here](https://electronjs.org/docs/tutorial/application-distribution) in the Electron binary directory structure.
+    >Copy `app` to `electron/resources` (in Win/Linux) OR to `electron/Electron.app/Contents/Resources/` in MacOS
+  * Copy the `site` directory, containing the compiled SimC application, in to the `app` directory of the Electron binary directory structure as mentioned above.
+  * Run the "Electron" executable file. It should automatically load SimC.
 
-## License
+> Signing of the electron forge appx(ms store) binary is done using our provided encrypted codesigning certifiacte `cert.pfx.enc` which requires to be decrypted to `cert.pfx` using `decrypt_cert.ps1` before runnning  `make` command in electron forge. For decryption password contact repo maintainers , or change the cert.pfx with your own in `forge.config.json`
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+To decrypt in command line without ps script:
+>CMD/Linux : `openssl aes-256-cbc -d -pbkdf2 -in cert.pfx.enc -out cert.pfx -pass pass:<yourpass>`
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+>PS : `& 'openssl' 'aes-256-cbc' '-d' '-pbkdf2' '-in' 'cert.pfx.enc' '-out' 'cert.pfx' '-pass' 'pass:K4fecn6abc$$$'`
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+## Contribution Guideline
+
+- Feel free to create an [`Issue`](https://github.com/aamitn/simc/issues/new) 
+- Or [`Fork`](https://github.com/aamitn/simc/fork) the repo and open [`PR`](https://github.com/aamitn/simc/compare) if you find a bug or would like to contribute!

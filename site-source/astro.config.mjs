@@ -1,11 +1,10 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
-// import { serverHelpers } from 'astro/dist/runtime/client/dev-toolbar/helpers'; // This import seems unused and potentially problematic, can be removed.
 
 export default defineConfig({
-  output: 'static',
-  outDir: '../site', //build utput directory
+  output: 'static', 
+  //outDir: '../site', //Custom build output directory 
   integrations: [
     tailwind(),
     react()
