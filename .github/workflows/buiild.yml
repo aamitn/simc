@@ -207,15 +207,14 @@ jobs:
       - name: Setup Windows 10 SDK
         uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
 
-      - name: Install WiX Toolset via Chocolatey (v3.14.0) if not already installed
+      # Step 4: Setup Wix Toolset - Required for MSI packaging
+      - name: Install WiX Toolset via Chocolatey (v3.14.0)
         shell: powershell
         run: |
-          $installed = choco list --local-only --exact wixtoolset | Select-String "wixtoolset"
-          if ($installed) {
-            Write-Output "WiX Toolset is already installed. Skipping installation."
-          } else {
-            Write-Output "Installing WiX Toolset 3.14.0 via Chocolatey..."
+          if (-not (Get-Command heat.exe -ErrorAction SilentlyContinue)) {
             choco install wixtoolset --version=3.14.0 -y --no-progress
+          } else {
+            Write-Host "WiX Toolset is already installed. Skipping installation."
           }
 
       - name: Add WiX Toolset to PATH (with wildcard support)
