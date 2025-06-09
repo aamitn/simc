@@ -18,6 +18,7 @@ module.exports = {
         prerelease: false,
         tagPrefix: 'v',
         draft: false,
+        generateReleaseNotes: true,
      // authToken: 'process.env.GITHUB_TOKEN '// Use this only for custom tokens GitHub token for authentication other than Default [GITHUB_TOKEN] 
       }
     }
