@@ -90,8 +90,8 @@ jobs:
           echo "Installing npm dependencies in ${{ env.ASTRO_SOURCE }}"
           npm ci
           echo "Building site-source project with Astro"
-          # Use npx to run astro command and pass GitHub Pages specific site and base paths
-          npx --no-install astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
+          # Use npm to run astro command and pass GitHub Pages specific site and base paths
+          npm run build -- --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.ASTRO_SOURCE }} # Sets the working directory for this step
 
       # Step 7: Run Gradle build tasks (Simc build)
