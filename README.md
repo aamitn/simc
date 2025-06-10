@@ -271,7 +271,7 @@ To build the Electron application loacted at **`app`** directory:
   * Copy the `site` directory, containing the compiled SimC application, in to the `app` directory of the Electron binary directory structure as mentioned above.
   * Run the "Electron" executable file. It should automatically load SimC.
 
-> Signing of the electron forge appx(ms store) binary is done using our provided encrypted codesigning certifiacte `cert.pfx.enc` which requires to be decrypted to `cert.pfx` using `decrypt_cert.ps1` before runnning  `make` command in electron forge. For decryption password contact repo maintainers , or change the cert.pfx with your own in `forge.config.json`
+> Signing of the electron forge appx(ms store) binary is done using our provided  codesigning certifiacte `cert.pfx` , you may change the same with your own in `forge.config.json`
 
 To decrypt in command line without ps script:
 >CMD/Linux : `openssl aes-256-cbc -d -pbkdf2 -in cert.pfx.enc -out cert.pfx -pass pass:<yourpass>`
