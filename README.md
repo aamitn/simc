@@ -282,3 +282,4 @@ To decrypt in command line without ps script:
 
 - Feel free to create an [`Issue`](https://github.com/aamitn/simc/issues/new) 
 - Or [`Fork`](https://github.com/aamitn/simc/fork) the repo and open [`PR`](https://github.com/aamitn/simc/compare) if you find a bug or would like to contribute!
+- No need for manual tagged release, push to main and tagging is auto-handled by electron forge.
