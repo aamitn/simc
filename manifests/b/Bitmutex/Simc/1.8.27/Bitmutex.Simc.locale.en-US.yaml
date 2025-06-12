@@ -1,0 +1,25 @@
+# Created using wingetcreate 1.9.14.0
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.9.0.schema.json
+
+PackageIdentifier: Bitmutex.Simc
+PackageVersion: 1.8.27
+PackageLocale: en-US
+Publisher: Bitmutex Technologies
+PublisherUrl: https://github.com/aamitn
+PublisherSupportUrl: https://github.com/aamitn/simc/issues
+PackageName: simc
+PackageUrl: https://github.com/aamitn/simc
+License: GPL-2.0
+Copyright: Copyright © 2025 Bitmutex Technologies
+ShortDescription: Interactive Circuit Simulator
+Tags:
+- circuit
+- gwt
+- java
+- simulation
+ReleaseNotesUrl: https://github.com/aamitn/simc/releases/tag/v1.8.27
+Documentations:
+- DocumentLabel: Wiki
+  DocumentUrl: https://github.com/aamitn/simc/wiki
+ManifestType: defaultLocale
+ManifestVersion: 1.9.0
