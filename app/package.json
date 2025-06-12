@@ -1,6 +1,6 @@
 {
   "name": "SimC",
-  "version": "1.8.27",
+  "version": "1.8.28",
   "description": "Interactive Circuit Simulator",
   "main": "main.js",
   "scripts": {
