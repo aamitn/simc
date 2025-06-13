@@ -2,22 +2,22 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.9.0.schema.json
 
 PackageIdentifier: Bitmutex.Simc
-PackageVersion: 1.8.27
+PackageVersion: 1.8.28
 PackageLocale: en-US
 Publisher: Bitmutex Technologies
-PublisherUrl: https://github.com/aamitn
+PublisherUrl: https://www.bitmutex.com
 PublisherSupportUrl: https://github.com/aamitn/simc/issues
 PackageName: simc
 PackageUrl: https://github.com/aamitn/simc
 License: GPL-2.0
-Copyright: Copyright © 2025 Bitmutex Technologies
-ShortDescription: Interactive Circuit Simulator
+ShortDescription: Electronic Circuit Simulation and Visualization Software, Open-Source and Royaty-Free Usage with web and multiplatform desktop versions
 Tags:
+- electronics
 - circuit
-- gwt
-- java
+- design
+- visualization
 - simulation
-ReleaseNotesUrl: https://github.com/aamitn/simc/releases/tag/v1.8.27
+ReleaseNotesUrl: https://github.com/aamitn/simc/releases/tag/v1.8.28
 Documentations:
 - DocumentLabel: Wiki
   DocumentUrl: https://github.com/aamitn/simc/wiki

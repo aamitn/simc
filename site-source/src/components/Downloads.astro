@@ -55,6 +55,42 @@ const getPackageIcon = (type) => {
               <MyIcon set="fa" name="FaWindows" size={24} className="text-blue-500 mr-2" client:load />
               <h3 class="text-xl font-semibold">Windows</h3>
             </div>
+
+            <!-- Winget Install Section -->
+            <div class="mb-4">
+              <div class="terminal-container bg-[#1e1e1e] dark:bg-[#1e1e1e] bg-gray-100 border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden transition-colors duration-200">
+                <div class="terminal-header bg-[#f0f0f0] dark:bg-[#2d2d2d] px-4 py-2 border-b border-gray-300 dark:border-gray-700 transition-colors duration-200">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-3 h-3 rounded-full bg-[#ff5f57] dark:bg-[#ff5f57]"></div>
+                      <div class="w-3 h-3 rounded-full bg-[#febc2e] dark:bg-[#febc2e]"></div>
+                      <div class="w-3 h-3 rounded-full bg-[#28c840] dark:bg-[#28c840]"></div>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full">
+                      Advanced
+                    </span>
+                  </div>
+                </div>
+                <div class="terminal-content p-4 font-mono text-sm bg-white dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-100 transition-colors duration-200">
+                  <div class="flex items-center space-x-2">
+                  <span class="text-green-600 dark:text-green-400">$</span>
+                  <code class="text-gray-800 dark:text-gray-100 select-all">winget install simc</code>
+                    <button
+                      class="copy-button ml-auto p-1.5 hover:bg-gray-700 rounded transition-all duration-200 group relative"
+                      data-command="winget install simc"
+                    >
+                      <span class="tooltip absolute -top-12 -left-[26px] bg-gray-700 text-xs text-gray-200 px-2 py-1 rounded opacity-0 transition-opacity duration-200 group-hover:opacity-100 flex flex-col items-center">
+                        <span>Copy</span>
+                        <span>command</span>
+                        <span class="tooltip-arrow absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-700 transform rotate-45"></span>
+                      </span>
+                      <MyIcon set="fa" name="FaCopy" size={14} className="text-gray-400 hover:text-gray-200 transition-colors" client:load />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <ul class="space-y-3">
               {downloads.windows.map(download => {
                 const icon = getPackageIcon(download.type);
@@ -237,6 +273,70 @@ const getPackageIcon = (type) => {
   gsap.set('.downloads-content', { opacity: 0, y: 50 });
   gsap.set('.bg-white', { opacity: 0, y: 50 });
   gsap.set('.rounded-full', { scale: 0, opacity: 0 });
+
+
+    // Add copy button functionality
+    document.querySelectorAll('.copy-button').forEach(button => {
+    button.addEventListener('click', async () => {
+      const command = button.getAttribute('data-command');
+      try {
+        await navigator.clipboard.writeText(command);
+        
+        // Get the icon element
+        const iconElement = button.querySelector('svg');
+        const copyIcon = button.innerHTML;
+        
+        // Update tooltip text and show success state
+        const tooltip = button.querySelector('.tooltip');
+        const originalTooltip = tooltip.innerHTML;
+        tooltip.innerHTML = 'Copied!';
+        tooltip.classList.add('opacity-100');
+        
+        // Animate out the current icon
+        gsap.to(iconElement, {
+          scale: 0,
+          duration: 0.2,
+          onComplete: () => {
+            // Replace with check icon
+            button.innerHTML = `
+              <span class="tooltip absolute -top-8 -left-[26px] bg-green-600 text-xs text-white px-2 py-1 rounded opacity-100 transition-opacity duration-200">
+                Copied!
+              </span>
+              <svg class="w-4 h-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>`;
+            
+            // Animate in the check icon
+            gsap.from(button.querySelector('svg'), {
+              scale: 0,
+              duration: 0.3,
+              ease: "back.out(1.7)"
+            });
+          }
+        });
+
+        // Reset back to copy icon after delay
+        setTimeout(() => {
+          const checkIcon = button.querySelector('svg');
+          gsap.to(checkIcon, {
+            scale: 0,
+            duration: 0.2,
+            onComplete: () => {
+              button.innerHTML = copyIcon;
+              gsap.from(button.querySelector('svg'), {
+                scale: 0,
+                duration: 0.3,
+                ease: "back.out(1.7)"
+              });
+            }
+          });
+        }, 2000);
+
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    });
+  });
 </script>
 
 <style>
@@ -259,4 +359,58 @@ const getPackageIcon = (type) => {
       transition: none;
     }
   }
+  
+  .terminal-container {
+    box-shadow: 0 20px 40px -14px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .terminal-content {
+    background-image: linear-gradient(
+      transparent 0%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .copy-button:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: rgb(59, 130, 246);
+  }
+
+  .tooltip {
+      pointer-events: none;
+      white-space: nowrap;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .tooltip-arrow {
+      pointer-events: none;
+    }
+
+    /* Smooth transition for tooltip and arrow */
+    .group:hover .tooltip,
+    .group:hover .tooltip-arrow {
+      transform: translateY(-2px);
+    }
+
+    .group:hover .tooltip-arrow {
+      transform: translateY(-2px) rotate(45deg);
+    }
+
+    /* Transition for both showing and movement */
+    .tooltip,
+    .tooltip-arrow {
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Dark mode specific gradient */
+    @media (prefers-color-scheme: dark) {
+      .terminal-content {
+        background-image: linear-gradient(
+          transparent 0%,
+          rgba(0, 0, 0, 0.3) 100%
+        );
+      }
+    }
 </style>
