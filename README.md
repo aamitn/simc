@@ -13,13 +13,13 @@
 * GH Pages: [https://www.aamitn.github.io/simc/](https://www.aamitn.github.io/simc/)
 
 ## [Release](https://github.com/aamitn/simc/releases/latest) Matrix
-| Windows(winget,exe,msi)   | Linux(Rpm,Deb)              | MacOS (dmg,pkg)          |
-|---------------------------|-----------------------------|--------------------------|
-| **SimC-x.x.x-Setup.exe**  | **SimC-x.x.x-1.x86_64.rpm** | **SimC-x.x.x-arm64.dmg** |
-| **SimC-x.x.x-Setup.msi**  | **simc_x.x.x_amd64.deb**    | **SimC-x.x.x-arm64.pkg** |
-| **Simc.appx**             |                             |                          |
-| **Simc.msi**              |                             |                          |
-| **`winget install simc`** |                             |                          |
+| Windows(winget,exe,msi)     | Linux(Rpm,Deb)              | MacOS (dmg,pkg)          |
+|-----------------------------|-----------------------------|--------------------------|
+| **_`winget install simc`_** | **SimC-x.x.x-1.x86_64.rpm** | **SimC-x.x.x-arm64.dmg** |
+| **SimC-x.x.x-Setup.exe**    | **simc_x.x.x_amd64.deb**    | **SimC-x.x.x-arm64.pkg** |
+| **SimC-x.x.x-Setup.msi**    |                             |                          |
+| **Simc.appx**               |                             |                          |
+| **Simc.msi**                |                             |                          |
 
 
 
